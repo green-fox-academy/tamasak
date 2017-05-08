@@ -1,0 +1,14 @@
+basic.forever(() => {
+    if (Math.abs(input.acceleration(Dimension.Z)) > -100 && Math.abs(input.acceleration(Dimension.Z)) < 100) {
+        basic.showLeds(`
+            . # . # .
+            . # . # .
+            . . . . .
+            # . . . #
+            . # # # .
+            `)
+        basic.pause(1000)
+    } else {
+        basic.clearScreen()
+    }
+})

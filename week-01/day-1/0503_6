@@ -1,0 +1,18 @@
+input.onGesture(Gesture.TiltLeft, () => {
+    basic.showLeds(`
+        # . . . .
+        # . . . .
+        # . . . .
+        # . . . .
+        # . . . .
+        `)
+})
+input.onGesture(Gesture.TiltRight, () => {
+    basic.showLeds(`
+        . . . . #
+        . . . . #
+        . . . . #
+        . . . . #
+        . . . . #
+        `)
+})

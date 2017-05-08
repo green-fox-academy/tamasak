@@ -1,0 +1,23 @@
+basic.forever(() => {
+    basic.clearScreen()
+    if (input.rotation(Rotation.Pitch) > 10) {
+        led.plot(2, 0)
+    } else {
+        if (input.rotation(Rotation.Pitch) < -10) {
+            led.plot(2, 4)
+        } else {
+            led.plot(2, 2)
+        }
+    }
+})
+basic.forever(() => {
+    if (input.rotation(Rotation.Roll) > 10) {
+        led.plot(0, 2)
+    } else {
+        if (input.rotation(Rotation.Roll) < -10) {
+            led.plot(4, 2)
+        } else {
+            led.plot(2, 2)
+        }
+    }
+})

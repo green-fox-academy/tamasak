@@ -1,0 +1,29 @@
+basic.forever(() => {
+    if (input.rotation(Rotation.Pitch) > 10) {
+        basic.showLeds(`
+            # # # # #
+            . . . . .
+            . . . . .
+            . . . . .
+            . . . . .
+            `)
+    } else {
+        if (input.rotation(Rotation.Pitch) < 10 && input.rotation(Rotation.Pitch) > 5) {
+            basic.showLeds(`
+                . . . . .
+                # # # # #
+                . . . . .
+                . . . . .
+                . . . . .
+                `)
+        } else {
+            basic.showLeds(`
+                . . . . .
+                . . . . .
+                # # # # #
+                . . . . .
+                . . . . .
+                `)
+        }
+    }
+})

@@ -1,0 +1,5 @@
+let item = ""
+serial.onDataReceived(serial.readUntil(serial.delimiters(Delimiters.Fullstop)), () => {
+    item = serial.readString()
+    serial.writeLine(item)
+})

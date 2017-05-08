@@ -1,0 +1,32 @@
+let alma: game.LedSprite = null
+let uto: game.LedSprite = null
+input.onButtonPressed(Button.B, () => {
+    uto.change(LedSpriteProperty.X, 1)
+})
+input.onButtonPressed(Button.A, () => {
+    uto.change(LedSpriteProperty.X, -1)
+})
+input.onButtonPressed(Button.AB, () => {
+    basic.clearScreen()
+    game.setScore(0)
+    alma = game.createSprite(Math.random(5), 0)
+    uto = game.createSprite(2, 4)
+    while (game.score() < 3) {
+        for (let i = 0; i < 4; i++) {
+            basic.pause(200)
+            alma.change(LedSpriteProperty.Y, 1)
+        }
+        if (uto.isTouching(alma)) {
+            game.addScore(1)
+            alma.set(LedSpriteProperty.X, Math.random(5))
+            alma.set(LedSpriteProperty.Y, 0)
+        } else {
+            alma.set(LedSpriteProperty.X, Math.random(5))
+            alma.set(LedSpriteProperty.Y, 0)
+        }
+    }
+    alma.delete()
+    uto.delete()
+    basic.showNumber(game.score())
+    basic.pause(2000)
+})

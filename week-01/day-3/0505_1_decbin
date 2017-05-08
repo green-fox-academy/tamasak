@@ -1,0 +1,37 @@
+let eredmeny = 0
+let karakter = 0
+let parse = 0
+let hossz = 0
+let szam = ""
+let _2x = 0
+let ciklus = 0
+let szam2 = 0
+basic.forever(() => {
+
+})
+basic.forever(() => {
+    szam2 = parseInt(serial.readLine())
+    ciklus = 0
+    _2x = 0
+    hossz = 0
+    while (ciklus == 0) {
+        if (szam2 / Math.pow(2, _2x) >= 1) {
+            hossz += 1
+            _2x += 1
+        } else {
+            ciklus += 1
+        }
+    }
+    _2x += -1
+    while (hossz > 0) {
+        if (szam2 - Math.pow(2, _2x) >= 0) {
+            szam2 += Math.pow(2, _2x) * -1
+            serial.writeNumber(1)
+        } else {
+            serial.writeNumber(0)
+        }
+        hossz += -1
+        _2x += -1
+    }
+    serial.writeLine("")
+})

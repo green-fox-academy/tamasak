@@ -1,0 +1,75 @@
+let ball_dir_y = false
+let ball_dir_x = false
+let ball_y = 0
+let ball_x = 0
+let pad_x = 0
+let score = 0
+let in_game = false
+let pad_y = 0
+input.onButtonPressed(Button.AB, () => {
+    basic.clearScreen()
+    in_game = !(in_game)
+    ball_x = Math.random(5)
+    ball_y = 0
+    ball_dir_x = Math.randomBoolean()
+    ball_dir_y = true
+    led.plot(ball_x, ball_y)
+    led.plot(pad_x, pad_y)
+})
+input.onButtonPressed(Button.A, () => {
+    if (pad_x > 0) {
+        led.unplot(pad_x, pad_y)
+        pad_x += -1
+        led.plot(pad_x, pad_y)
+    }
+})
+input.onButtonPressed(Button.B, () => {
+    if (pad_x < 4) {
+        led.unplot(pad_x, pad_y)
+        pad_x += 1
+        led.plot(pad_x, pad_y)
+    }
+})
+basic.forever(() => {
+    while (in_game) {
+        basic.pause(500)
+        led.unplot(ball_x, ball_y)
+        if (ball_dir_x) {
+            ball_x += 1
+        } else {
+            ball_x += -1
+        }
+        if (ball_dir_y) {
+            ball_y += 1
+        } else {
+            ball_y += -1
+        }
+        if (ball_x == pad_x && ball_y == 3) {
+            ball_dir_y = !(ball_dir_y)
+        }
+        if (ball_x >= 4) {
+            ball_dir_x = !(ball_dir_x)
+        }
+        if (ball_x <= 0) {
+            ball_dir_x = !(ball_dir_x)
+        }
+        if (ball_y <= 0) {
+            ball_dir_y = !(ball_dir_y)
+        }
+        if (ball_y >= 4) {
+            in_game = !(in_game)
+        }
+        led.plot(ball_x, ball_y)
+    }
+})
+basic.clearScreen()
+in_game = false
+score = 0
+pad_x = 2
+pad_y = 4
+ball_x = Math.random(5)
+ball_y = 0
+ball_dir_x = Math.randomBoolean()
+ball_dir_y = true
+led.plot(ball_x, ball_y)
+led.plot(pad_x, pad_y)

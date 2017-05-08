@@ -1,0 +1,32 @@
+let mozgas_y = 0
+let mozgas_x = 0
+let uto2: game.LedSprite = null
+let arny: game.LedSprite = null
+let uto1: game.LedSprite = null
+let labda: game.LedSprite = null
+let uto1y = 0
+input.onButtonPressed(Button.A, () => {
+    basic.clearScreen()
+    uto1y = 1
+    labda = game.createSprite(2, 0)
+    uto1 = game.createSprite(0, uto1y)
+    arny = game.createSprite(1, uto1y)
+    led.unplot(1, uto1y)
+    uto2 = game.createSprite(4, 2)
+    mozgas_x = -1
+    mozgas_y = 1
+    for (let i = 0; i < 50; i++) {
+        basic.pause(300)
+        labda.change(LedSpriteProperty.Y, mozgas_y)
+        labda.change(LedSpriteProperty.X, mozgas_x)
+        if (labda.isTouchingEdge()) {
+            mozgas_y = mozgas_y * -1
+        }
+        if (labda.isTouching(arny)) {
+            mozgas_x = mozgas_x * -1
+        }
+        if (labda.isTouching(uto2)) {
+            mozgas_x = mozgas_x * -1
+        }
+    }
+})

@@ -1,0 +1,20 @@
+let _2x = 0
+let parse = 0
+let eredmeny = 0
+let karakter = 0
+let hossz = 0
+let szam = ""
+basic.forever(() => {
+    szam = serial.readLine()
+    hossz = szam.length
+    karakter = hossz
+    eredmeny = 0
+    while (karakter > 0) {
+        parse = parseInt(szam.charAt(hossz - karakter))
+        _2x = Math.pow(2, karakter - 1)
+        eredmeny += parse * _2x
+        karakter += -1
+    }
+    serial.writeNumber(eredmeny)
+    serial.writeLine("")
+})

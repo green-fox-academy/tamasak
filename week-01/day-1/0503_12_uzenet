@@ -1,0 +1,7 @@
+radio.onDataPacketReceived(({receivedString}) => {
+    basic.showString(receivedString)
+})
+input.onButtonPressed(Button.A, () => {
+    radio.sendString("szia")
+})
+radio.setGroup(200)
