@@ -1,2 +1,2 @@
 # tamasak
-https://github.com/greenfox-academy/totoro-syllabus
+[Syllabus](https://github.com/greenfox-academy/totoro-syllabus)
