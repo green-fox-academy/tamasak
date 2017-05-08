@@ -1,1 +1,2 @@
 elso file tartalma
+valtozas 01
