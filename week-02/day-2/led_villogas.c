@@ -36,4 +36,8 @@ int main(void)
         // Now turn off the LED by writing the bit "0" to PORTB 6th bit (PORTB5)
         // The PORTB |= 0 << PORTB5 will not work. Do you know why?
        
-        PORTB |= !(1 << PORTB5)
+        PORTB ^= 1 << PORTB5
+        _delay_ms(500); 
+        
+        }
+}
