@@ -14,7 +14,7 @@ void anagram (){
     gets(word2);
 
 
-    int lengthWord1 = strlen (word1);
+    int lengthWord1 = strlen (word1); //word1 hossza
     int lengthWord2 = strlen (word2);
 
     if (lengthWord1 != lengthWord2){
@@ -22,9 +22,9 @@ void anagram (){
         printf("Nope!\n");
         }
 
-    else {
+    else {                              
         int i, j, tmp;
-        for(i= lengthWord1-1; i>0; i--)
+        for(i= lengthWord1-1; i>0; i--)         //buborékrendezés word1
             for(j=0; j<i; j++)
                 if(word1[j] > word1[j+1])
                 {
@@ -33,7 +33,7 @@ void anagram (){
                     word1[j+1] = tmp;
                 }
 
-        for(i= lengthWord2-1; i>0; i--)
+        for(i= lengthWord2-1; i>0; i--)         //buborékrendezés word1
             for(j=0; j<i; j++)
                 if(word2[j] > word2[j+1])
                 {
@@ -42,7 +42,7 @@ void anagram (){
                     word2[j+1] = tmp;
                 }
 
-        int ret = strcmp ( word1, word2 );
+        int ret = strcmp ( word1, word2 );      //összehasonlítás karakterenként
 
         if (ret < 0) {
             printf("Nope!");
