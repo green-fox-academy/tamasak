@@ -16,25 +16,34 @@ void guessNumber(){
 
     int life = 5;
     printf("Guess a number between 1 and %d. You have %d lifes.\n", maxnum, life);
-    while (life >= 0) {
+    for (life; life > 0; life--) {
         int guess;
         scanf("%u", &guess);
 
-        if (life==0){
-            printf("You have lost!\n");
-            life--;
-        }
-        else if (guess == number){
+
+        if (guess == number){
+
             printf("Right!\n");
-            life = 0;
+            life = -1;
         }
         else if (guess > number){
-            printf("Too high! You have %d lifes left\n", life);
-            life--;
+            if (life==1){
+                printf("You have lost!\n");
+            }
+
+            else {
+            printf("Too high! You have %d lifes left\n", (life-1));
+            }
+
         }
         else if (guess < number){
-            printf("Too low! You have %d lifes left\n", life);
-            life--;
+            if (life==1){
+                printf("You have lost!\n");
+            }
+            else{
+                printf("Too low! You have %d lifes left\n", (life-1));
+            }
+
         }
         else {
 
