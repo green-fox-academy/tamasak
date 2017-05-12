@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-void anagram (char *a){
+void anagram (){
 
     char word1[100];
     char word2[100];
@@ -63,8 +63,8 @@ void anagram (char *a){
 
 int main() {
 
-    char a[240];
-    anagram(a);
+    
+    anagram();
 
 
     return 0;
