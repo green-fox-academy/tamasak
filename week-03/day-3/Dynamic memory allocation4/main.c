@@ -11,9 +11,12 @@
 int* Resize (int* array, int size, int new_size);
 
 int main() {
+    int* array = NULL;
+    array = calloc(6,sizeof(int));
+    for (int i = 0; i < 6; i++){
+        array[i] = i+1;
+    }
     int size = 6;
-    int* array = (int*)calloc(size, sizeof(int));
-    array[6] = {1,2,3,4,5,6};
     int new_size = 9;
     Resize(array,size,new_size);
     free(array);
@@ -22,17 +25,16 @@ int main() {
 }
 
 int* Resize (int* array, int size, int new_size) {
-    int* new_array = (int*)calloc(new_size, sizeof(int));
+    //int* new_array = NULL;
+    array = (int*)realloc(array, new_size);
     int i;
-    for (i = 0; i < size; i++) {
-        new_array[i] = array[i];
-    }
-    for (i; i < new_size; i++) {
+    /*for (i = size; i < new_size; i++) {
         new_array[i] = 0;
-    }
+    }*/
 
     for (int i = 0; i < new_size; i++) {
-        printf("%d\n", new_array[i]);
+        printf("%d\n", array[i]);
     }
+    return *array;
 
 }
