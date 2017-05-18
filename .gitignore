@@ -142,3 +142,8 @@ bin/
 obj/
 
 # End of https://www.gitignore.io/api/codebloc
+
+#atmelstudio
+*.atsln
+*.xml
+*.cproj
