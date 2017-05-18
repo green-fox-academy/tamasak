@@ -26,7 +26,7 @@ void MCP4821_Init() {
 
 	// TODO:
 	// Set the clock frequency. Use the definitions from MCP4821_driver.h!
-	SPCR |= 1 << SPI_SPR;
+	SPCR |= SPI_SPR;
 
 	// TODO:
 	// Enable SPI peripheral
