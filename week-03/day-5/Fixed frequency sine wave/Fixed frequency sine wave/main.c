@@ -109,7 +109,7 @@ int main(void) {
 	int16_t sinwave;
 	
 	while (1) {
-		sinwave = result*50;
+		sinwave =150 + result*50;
 		//printf("%d\r\n", sinwave);
 		// ADC tester code
 		//adc_data = ADC_Read();
