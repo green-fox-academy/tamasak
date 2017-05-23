@@ -31,6 +31,27 @@ float average_gold(struct pirate *array, int length)
 // Create a function that takes an array of pirates (and it's length) then returns the name of the
 // richest that has wooden leg
 
+char *richest_pirate(struct pirate *array, int length)
+{
+    int j = 0;
+    int tmp = 0;
+    for (int i = 0; i < length; i++) {
+        if (array[i].has_wooden_leg != 0) {
+            if (array[i].gold_count > j){
+                j = array[i].gold_count;
+                tmp = i;
+            }
+        }
+
+    }
+    /*if ((j == 0) && (array[0].has_wooden_leg != 0)) {
+        j = -1;
+    }*/
+    //char name[256] = array[j].name;
+    //printf("%c\n", name);
+    return array[tmp].name;
+}
+
 int main()
 {
     struct pirate pirates[] = {
@@ -44,6 +65,7 @@ int main()
     int len = sizeof(pirates) / sizeof(pirates[0]);
     printf("gold %d\n", sum_gold(pirates, len));
     printf("average %f\n", average_gold(pirates, len));
+    printf("name of richest %s\n", richest_pirate(pirates, len));
 
     return 0;
 }
