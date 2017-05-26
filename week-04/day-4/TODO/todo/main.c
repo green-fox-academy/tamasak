@@ -47,8 +47,12 @@ int main()
 
         int ret;
         if ((ret = strcmp (task, "-a")) == 0) {
-            if (add_new_task(&storeage, input2, prio) == 1); {
-            printf("Task has been added.\n\n");
+            int cont;
+            if (cont = strstr(input2, "\"") != 0) {
+                (add_new_task(&storeage, input2, prio) == 1);
+                printf("Task has been added.\n\n");
+            } else {
+                printf("Unable to add: No task is provided.\n");
             }
         }
         if ((ret = strcmp (task, "-l")) == 0) {
@@ -71,7 +75,12 @@ int main()
             show_command();
         }
         if ((ret = strcmp (task, "-r")) == 0) {
-            remove_task (&storeage, input2);
+            int cont;
+            if (cont = strstr(input2, " ") != 0) {
+                remove_task (&storeage, input2);
+            } else {
+                printf("Unable to remove: No index is provided.\n");
+            }
         }
         if ((ret = strcmp (task, "q")) == 0)
             break;
@@ -89,24 +98,25 @@ int add_new_task(todo_storeage *storeage, char *input, int prio)
     char *name;
     name = strtok(input, "\"");
     name = strtok(NULL, "\"");
-    if (name == NULL) {
+    if (name) {
+        strcpy(storeage->array[length_new - 1].name, name);
+        storeage->array[length_new - 1].priority = prio;
+        return 1;
+    } else {
         printf("Unable to add: No task is provided.\n");
         return 0;
-    } else if (name != NULL) {
-    strcpy(storeage->array[length_new - 1].name, name);
-    storeage->array[length_new - 1].priority = prio;
-    //printf("Write \"-wr\" to write changes into file.\n");
-    return 1;
     }
 }
 
 int list_task(todo_storeage *storeage)
 {
     printf("TODO list:\n");
+    printf("Num  |\tTask\t\t|  Prio\n");
     for (int i = 0; i < storeage->length; i++) {
-        printf("%d\t%s\n", (i+1), storeage->array[i].name);
+        printf("%d\t%s\t\t   %d\n", (i+1), storeage->array[i].name, storeage->array[i].priority);
     }
     printf("\n");
+    //printf("%d\n", sizeof(storeage->array[0].name));
     return 0;
 }
 
@@ -167,18 +177,24 @@ int remove_task (todo_storeage *storeage, char *input)
     task = strtok(input, " ");
     task = strtok(NULL, " ");
     int num = atoi(task);
-    FILE *file = fopen("xxx","w");
-    for (int i = 0; i < storeage->length; i++) {
-        if (i != (num-1))
-        fprintf(file, "%s\n", storeage->array[i].name);
+    if ((num <= storeage->length) && (num > 0)) {
+        FILE *file = fopen("backup","w");
+        for (int i = 0; i < storeage->length; i++) {
+            if (i != (num-1))
+            fprintf(file, "%s\n", storeage->array[i].name);
+        }
+        fclose(file);
+        empty_the_list(storeage);
+        char output[200];
+        strcpy (output,"-rd\"");
+        strcat (output, "backup");
+        strcat (output,"\"");
+        read_from_file(storeage, output);
+        //char filename[] = "backup";
+        //int remove(filename);
+        printf("Task %d has been removed.\n", num);
+    } else {
+        printf("Unable to remove: Index is out of bound.\n");
     }
-    fclose(file);
-    empty_the_list(storeage);
-    char output[200];
-    strcpy (output,"-rd\"");
-    strcat (output, "xxx");
-    strcat (output,"\"");
-    read_from_file(storeage, output);
-    int remove(xxx);
-    printf("Task %d has been removed.\n", num);
+    return 0;
 }
