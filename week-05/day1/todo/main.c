@@ -27,36 +27,35 @@ void complete_task(int index_cmp);
 int main()
 {
 
-	void start_srceen();
+	start_srceen();
 	char choice;
 
-	while (1) {
+	while (4) {
 
-		sleep(1); //decreased from 1000
-		//clear_screen();
-		system("clear");
+		sleep(2); //decreased from 1000
+		clear_screen();
 		printf("Please enter what you want to do: ");
 		choice = getchar();
 		char c = 0;
 		while (c != '\n')
 			c = getchar();
 
-		if (choice == 0) {
+		if (choice == '0') {
 			printf("program will end now");
 			break;
-		} else if (choice == 1) {
+		} else if (choice == '1') {
 			see_tasks();
-		} else if (choice == 2) {
+		} else if (choice == '2') {
 			tasks_prio();
-		} else if (choice == 3) {
+		} else if (choice == '3') {
 			new_task();
-		} else if (choice == 4) {
+		} else if (choice == '4') {
 			int index_task;
 			printf("Enter the index of the task\n");
 			scanf("%d", &index_task);
 			getchar();
 			rm_task(index_task);
-		} else if (choice == 5) {
+		} else if (choice == '5') {
 			int index_cmp;
 			printf("Enter the index of the task\n");
 			scanf("%d", &index_cmp);
@@ -70,12 +69,12 @@ int main()
 	return 0;
 }
 
-void print()
+/*void print()
 {
 
 	print("helloworld");
 
-}
+}*/
 
 void start_srceen()
 {
@@ -95,7 +94,7 @@ void see_tasks()
 {
 
 	printf("Num | Tasks\n");
-	for (int i = 0; i < num_tasks - 1; i++) {
+	for (int i = 0; i < num_tasks; i++) {
 		if (tasks[i].done) {
 			printf("%d [x] - %s\n", i + 1, tasks[i].name);
 		} else {
@@ -106,11 +105,10 @@ void see_tasks()
 
 void tasks_prio()
 {
-
-	for (int i = 0; i < num_tasks; i++) {
-		for (int j = 5; j > 0; j-- ) {
-			if (tasks[i].prio == j) {
-				printf("Prio | Tasks\n");
+    printf("Prio | Tasks\n");
+    for (int j = 5; j > 0; j-- ) {
+        for (int i = 0; i < num_tasks; i++) {
+            if (tasks[i].prio == j) {
 				printf("%d - %s\n", tasks[i].prio, tasks[i].name);
 			}
 		}
@@ -121,7 +119,7 @@ void new_task()
 {
 
 	printf("Enter the name of the task: \n");
-	gets(&tasks[num_tasks].name);
+	scanf("%s",tasks[num_tasks].name);
 	printf("Enter the priority of the task: \n");
 	scanf("%d", &tasks[num_tasks].prio);
 	getchar();
@@ -133,12 +131,12 @@ void new_task()
 void rm_task(int index_task)
 {
 
-	num_tasks--;
 	for (int i = index_task; i < num_tasks; i++) {
 		strcpy(tasks[i].name, tasks[i + 1].name);
 		tasks[i].prio = tasks[i + 1].prio;
 		tasks[i].done = tasks[i + 1].done;
 	}
+	num_tasks--;
 
 }
 
@@ -151,5 +149,6 @@ void complete_task(int index_cmp)
 
 void clear_screen()
 {
-	system("cls");
+	//system("cls");
+	system("clear");
 }
