@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <curses.h>
+#include <time.h>
 
 typedef struct
 {
@@ -40,10 +41,14 @@ int main()
 
     int prio = 100;
     while (1) {
+        time_t rawtime;
+        struct tm * timeinfo;
+        time ( &rawtime );
+        timeinfo = localtime ( &rawtime );
         char input[250];
         gets(input);
         FILE *file = fopen("todo.log","a");
-        fprintf(file, "%s\n", input);
+        fprintf(file, "%s%s\n", asctime (timeinfo), input);
         fclose(file);
         char input2[250];
         strcpy(input2, input);
@@ -87,7 +92,7 @@ int main()
         }else if ((ret = strcmp (task, "q")) == 0) {
             break;
         }else {
-            printf("Unsupported argument.\n");
+            //printf("Unsupported argument.\n");
         }
     }
     deinit(&storeage);
@@ -196,7 +201,7 @@ int remove_task (todo_storeage *storeage, char *input)
         FILE *file = fopen("backup","w");
         for (int i = 0; i < storeage->length; i++) {
             if (i != (num-1))
-            fprintf(file, "%s\n", storeage->array[i].name);
+            fprintf(file, "%d %s\n", storeage->array[i].priority, storeage->array[i].name);
         }
         fclose(file);
         empty_the_list(storeage);
