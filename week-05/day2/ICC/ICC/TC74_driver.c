@@ -10,12 +10,13 @@ void TWI_init(void)
 	TWSR |= 1 << TWPS0;
 
 	// TODO:
-	// Set SCL frequency = 11059200 / (16 + 2 * 48 * 4) = 27.648Khz
+	// Set SCL frequency = 16000000 / (16 + 2 * 48 * 4) = 40Khz
 	//So set the correct register to 0x30
 	TWBR = 0x30;
 
 	// TODO
 	//Enable TWI
+	TWCR |= 1 << TWEN;
 
 }
 
@@ -23,11 +24,12 @@ void TWI_start(void)
 {
 	//TODO
 	//Send start signal
-
+	TWCR = (1<<TWINT) | (1<<TWSTA)|(1<<TWEN);
 
 	// TODO:
 	// Wait for TWINT Flag set. This indicates that
 	//the START condition has been transmitted.
+	while (TWCR & (1 << TWINT));
 
 }
 
@@ -35,6 +37,8 @@ void TWI_stop(void)
 {
 	//TODO
 	//Send stop signal
+	TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTO);
+
 
 }
 
