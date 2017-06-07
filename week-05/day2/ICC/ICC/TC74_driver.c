@@ -29,7 +29,7 @@ void TWI_start(void)
 	// TODO:
 	// Wait for TWINT Flag set. This indicates that
 	//the START condition has been transmitted.
-	while (TWCR & (1 << TWINT));
+	while (!(TWCR & (1 << TWINT)));
 
 }
 
@@ -49,6 +49,8 @@ uint8_t TWI_read_ack(void)
 	//Wait for TWINT Flag set. This indicates that
 	//the DATA has been transmitted, and ACK/
 	//NACK has been received.
+	//TWCR = 0xC8;
+	while (!(TWCR & (1 << TWINT)));
 
 }
 
@@ -60,7 +62,8 @@ uint8_t TWI_read_nack(void)
 	//Wait for TWINT Flag set. This indicates that
 	//the DATA has been transmitted, and ACK/
 	//NACK has been received.
-
+	//TWCR = 0xC0;
+	while (!(TWCR & (1 << TWINT)));
 }
 
 void TWI_write(uint8_t u8data)
@@ -71,7 +74,8 @@ void TWI_write(uint8_t u8data)
 	//Wait for TWINT Flag set. This indicates that
 	//the DATA has been transmitted, and ACK/
 	//NACK has been received.
-
+	TWDR = u8data;
+	while (!(TWCR & (1 << TWINT)));
 }
 
 //TODO
@@ -79,7 +83,21 @@ void TWI_write(uint8_t u8data)
 //The function need to be take the address of the ic as a parameter.
 //datasheet: http://ww1.microchip.com/downloads/en/DeviceDoc/21462D.pdf
 //And returns with the temperature.
-
+uint8_t read_temperature(uint8_t address)
+{
+	TWI_start();
+	TWAR = TC_ADDRESS + 1;
+	TWI_read_nack();
+	/*//command
+	TWI_read_nack();
+	TWI_start();
+	TWAR = TC_ADDRESS + 1;*/
+	TWI_read_nack();
+	TWI_read_nack();	
+	uint8_t temp = TWDR;
+	TWI_stop();
+	return temp;
+}
 
 //TODO Advanced:
 //Calculate the average of the last 16 data, and returns with that.

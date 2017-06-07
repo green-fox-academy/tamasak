@@ -8,6 +8,7 @@
 #define TC_READ		1
 //TODO
 //Define the TC74A0 address
+#define TC_ADDRESS 0x90
 
 void TWI_init(void);
 void TWI_start(void);
