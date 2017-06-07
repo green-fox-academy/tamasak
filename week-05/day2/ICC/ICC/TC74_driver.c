@@ -79,7 +79,8 @@ void TWI_write(uint8_t u8data)
 	//the DATA has been transmitted, and ACK/
 	//NACK has been received.
 	TWDR = u8data;
-	TWCR &= ~(1 << TWINT);
+	TWCR = (1<<TWINT) | (1<<TWEN);
+	//TWCR &= ~(1 << TWINT);
 	while (!(TWCR & (1 << TWINT)));
 }
 
