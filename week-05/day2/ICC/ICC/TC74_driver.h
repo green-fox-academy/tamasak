@@ -16,5 +16,7 @@ void TWI_write(uint8_t u8data);
 void TWI_stop(void);
 uint8_t TWI_read_nack(void);
 uint8_t TWI_read_ack(void);
+int8_t read_temperature(void);
+float average_temperature(void);
 
 #endif // _TC74_DRIVER_H

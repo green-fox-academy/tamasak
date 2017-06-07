@@ -50,7 +50,9 @@ uint8_t TWI_read_ack(void)
 	//the DATA has been transmitted, and ACK/
 	//NACK has been received.
 	//TWCR = 0xC8;
+	TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWEA);
 	while (!(TWCR & (1 << TWINT)));
+	return TWDR;
 
 }
 
@@ -63,7 +65,9 @@ uint8_t TWI_read_nack(void)
 	//the DATA has been transmitted, and ACK/
 	//NACK has been received.
 	//TWCR = 0xC0;
+	TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWEA);
 	while (!(TWCR & (1 << TWINT)));
+	return TWDR;
 }
 
 void TWI_write(uint8_t u8data)
@@ -75,6 +79,7 @@ void TWI_write(uint8_t u8data)
 	//the DATA has been transmitted, and ACK/
 	//NACK has been received.
 	TWDR = u8data;
+	TWCR &= ~(1 << TWINT);
 	while (!(TWCR & (1 << TWINT)));
 }
 
@@ -83,24 +88,33 @@ void TWI_write(uint8_t u8data)
 //The function need to be take the address of the ic as a parameter.
 //datasheet: http://ww1.microchip.com/downloads/en/DeviceDoc/21462D.pdf
 //And returns with the temperature.
-uint8_t read_temperature(uint8_t address)
+int8_t read_temperature(void)
 {
+	int8_t temp;
 	TWI_start();
-	TWAR = TC_ADDRESS + 1;
-	TWI_read_nack();
-	/*//command
-	TWI_read_nack();
+	TWI_write(TC_ADDRESS);
+	TWI_read_ack();
+	TWI_write(0);
+	TWI_read_ack();
 	TWI_start();
-	TWAR = TC_ADDRESS + 1;*/
-	TWI_read_nack();
-	TWI_read_nack();	
-	uint8_t temp = TWDR;
+	TWI_write(TC_ADDRESS + 1);
+	temp = TWI_read_ack();
 	TWI_stop();
+	//int8_t temp = TWDR;
 	return temp;
 }
 
 //TODO Advanced:
 //Calculate the average of the last 16 data, and returns with that.
+float average_temperature(void)
+{
+	int sum = 0;
+	for (int i = 0; i < 16; i++) 
+		sum += read_temperature();
+	float aver = (float)sum / 16;
+	return aver;
+}
+
 //TODO Advanced+:
 //Select the outstanding (false data) before average it.
 //These data don't needed, mess up your datas, get rid of it.

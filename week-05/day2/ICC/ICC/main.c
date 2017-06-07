@@ -15,6 +15,10 @@
 #define LED_PIN_POS		PINB5
 #define LED_PORT		PORTB
 #define LED_PORT_POS	PORTB5
+void led_init()
+{
+	DDRB |= 1 << DDRB5;
+}
 
 void system_init()
 {
@@ -32,6 +36,7 @@ int main(void)
 
 	// Don't forget to call the init function :)
 	system_init();
+	led_init();
 
 	// Setting up STDIO input and output buffer
 	// You don't have to understand this!
@@ -48,15 +53,21 @@ int main(void)
 	sei();
 
 	// Infinite loop
+	int8_t adc_data;
 	while (1) {
 		//TODO
 		//Write the temperature frequently.
+		adc_data = read_temperature();
+		//UART_send_character(adc_data);
+		printf("%d\n", adc_data);
+		_delay_ms(1000);		
 
 		//TODO
 		//Advanced: Don't use delay, use timer.
 
 		//TODO
 		//Blink the led to make sure the code is running
+		PINB |= 1 << PINB5;
 
 	}
 }
