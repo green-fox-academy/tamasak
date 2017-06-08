@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <avr/interrupt.h>
 #include <stdint.h>
+#include "Temp_log.h"
+//#include <conio.h>
 
 #ifndef F_CPU
 #define F_CPU 16000000UL
@@ -25,7 +27,7 @@ ISR(TIMER0_OVF_vect) {
 		cntr++;
 	} else {
 		adc_data = read_temperature();
-		printf("%d\n", adc_data);
+		//printf("%d\n", adc_data);
 		//printf("%f\n", average_temperature());
 		PINB |= 1 << PINB5;
 		cntr = 0;
@@ -77,22 +79,10 @@ int main(void)
 	//----- END OF STDIO IO BUFFER SETUP
 
 	// Try printf
-	printf("Startup...\r\n");
+	init_templog();
 
 	// Infinite loop
 	while (1) {
-		//TODO
-		//Write the temperature frequently.
-		/*adc_data = read_temperature();
-		printf("%d\n", adc_data);*/
-		//average_temperature();
-		//_delay_ms(2000);	
-
-		//TODO
-		//Advanced: Don't use delay, use timer.
-
-		//TODO
-		//Blink the led to make sure the code is running
-
+			
 	}
 }

@@ -6,8 +6,9 @@
 void print_usage(void);
 void init_templog(void);
 void list_ports(void);
-void set_port_name(void);
+char *set_port_name(void);
 void set_write_file(void);
 void open_port(void);
+char port[80];
 
 #endif // _TC74_DRIVER_H

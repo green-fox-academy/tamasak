@@ -1,7 +1,10 @@
-﻿#include <avr/io.h>
-#include <string.h>
+﻿#include <string.h>
 #include <stdint.h>
 #include "Temp_log.h"
+#include <stdio.h>
+#include "rs232.h"
+#include <curses.h>
+#include <ncurses.h>
 
 void init_templog(void)
 {
@@ -25,17 +28,30 @@ void print_usage(void)
 
 void list_ports(void)
 {
-	
+    comEnumerate();
+    comEnumerate_mod();
 }
-void set_port_name(void)
+char *set_port_name(void)
 {
-	
+    printf("Enter the port name\n");
+    char tmp[80];
+    strcpy(tmp, port);
+    gets(port);
+    if (comEnumerate_mod2() == 0) {
+        printf("Error, no such device\n");
+        strcpy(port, tmp);
+    }
+    return port;
 }
 void set_write_file(void)
 {
-	
+    printf("Enter the file name\n");
+    char path[80];
+    gets(path);
+    FILE *file = fopen(path,"a");
+    fclose(file);
 }
 void open_port(void)
 {
-	
+
 }
