@@ -65,7 +65,7 @@ uint8_t TWI_read_nack(void)
 	//the DATA has been transmitted, and ACK/
 	//NACK has been received.
 	//TWCR = 0xC0;
-	TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWEA);
+	TWCR = (1<<TWINT) | (1<<TWEN)
 	while (!(TWCR & (1 << TWINT)));
 	return TWDR;
 }
