@@ -9,6 +9,8 @@ void list_ports(void);
 char *set_port_name(void);
 void set_write_file(void);
 void open_port(void);
+void start_stop_log(int log);
 char port[80];
+char path[100];
 
 #endif // _TC74_DRIVER_H

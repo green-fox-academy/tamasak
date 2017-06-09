@@ -27,7 +27,7 @@ ISR(TIMER0_OVF_vect) {
 		cntr++;
 	} else {
 		adc_data = read_temperature();
-		//printf("%d\n", adc_data);
+		printf("%d\n", adc_data);
 		//printf("%f\n", average_temperature());
 		PINB |= 1 << PINB5;
 		cntr = 0;
@@ -79,7 +79,7 @@ int main(void)
 	//----- END OF STDIO IO BUFFER SETUP
 
 	// Try printf
-	init_templog();
+	printf("Start...\n");
 
 	// Infinite loop
 	while (1) {

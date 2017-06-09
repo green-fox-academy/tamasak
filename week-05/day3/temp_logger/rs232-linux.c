@@ -96,7 +96,7 @@ int comEnumerate_mod()
 {
     for (int i = 0; i < noDevices; i++) {
         if (comDevices[i].port)
-        printf("%s\n",comDevices[i].port);
+        printf("%d\t%s\n", i + 1 , comDevices[i].port);
         free(comDevices[i].port);
         comDevices[i].port = NULL;
     }
@@ -119,6 +119,21 @@ int comEnumerate_mod2()
     for (int i = 0; i < noBases; i++)
         _AppendDevices(devBases[i]);
     return cntr;
+}
+int comEnumerate_mod3()
+{
+    int i = 0;
+    for (i = 0; i < noDevices; i++) {
+        if (comDevices[i].port)
+           if (strcmp(comDevices[i].port, port) == 0)
+                break;
+        free(comDevices[i].port);
+        comDevices[i].port = NULL;
+    }
+    noDevices = 0;
+    for (int i = 0; i < noBases; i++)
+        _AppendDevices(devBases[i]);
+    return i;
 }
 
 void comTerminate()

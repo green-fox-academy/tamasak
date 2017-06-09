@@ -67,6 +67,7 @@ extern "C" {
     int comEnumerate();
     int comEnumerate_mod();
     int comEnumerate_mod2();
+    int comEnumerate_mod3();
 
     /**
      * \fn int comGetNoPorts()

@@ -41,7 +41,7 @@ char getch(void)
 int main()
 {
     init_templog();
-
+    int log = -1; // if -1 -> not logging, if 1 -> logging
     while (1) {
 		int ch;
 		ch = getch();
@@ -53,10 +53,13 @@ int main()
 			list_ports();
 		} else if (ch == 112) { //p
 			set_port_name();
-		} else if (ch == 119) {
+		} else if (ch == 119) { //w
 			set_write_file();
-		} else if (ch == 111) {
+		} else if (ch == 111) { //o
 			open_port();
+		} else if (ch == 115) { //s
+            //start_stop_log(log);
+            log *= -1;
 		}
 
 	}

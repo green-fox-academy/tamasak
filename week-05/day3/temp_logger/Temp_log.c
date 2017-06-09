@@ -5,6 +5,7 @@
 #include "rs232.h"
 #include <curses.h>
 #include <ncurses.h>
+#include <time.h>
 
 void init_templog(void)
 {
@@ -24,6 +25,7 @@ void print_usage(void)
 	printf("c\tClose port\n");
 	printf("r\tSet read filename\n");
 	printf("a\tCalculate average in given period\n");
+	printf("\n");
 }
 
 void list_ports(void)
@@ -40,18 +42,32 @@ char *set_port_name(void)
     if (comEnumerate_mod2() == 0) {
         printf("Error, no such device\n");
         strcpy(port, tmp);
+    } else {
+        printf("Port has been set")
     }
     return port;
 }
 void set_write_file(void)
 {
     printf("Enter the file name\n");
-    char path[80];
     gets(path);
-    FILE *file = fopen(path,"a");
-    fclose(file);
 }
 void open_port(void)
 {
+    if (port == NULL) {
+        printf("No port has been set");
+    } else {
+        comOpen(comEnumerate_mod3(), 115200);
+    }
 
 }
+/*void start_stop_log(int log)
+{
+    if (log = 1) { //open file and start logging
+        FILE *file = fopen(path,"a");
+        fprintf(file, "%s%s\n", asctime (timeinfo), input);
+        fclose(file);
+    } else { //stop logging and close file
+
+    }
+}*/
