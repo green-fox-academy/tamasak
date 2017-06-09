@@ -3,9 +3,41 @@
 #include "Temp_log.h"
 #include <stdio.h>
 #include "rs232.h"
-#include <curses.h>
-#include <ncurses.h>
+//#include <curses.h>
+//#include <ncurses.h>
 #include <time.h>
+#include <termios.h>
+
+static struct termios old, new;
+/* Initialize new terminal i/o settings */
+void initTermios(int echo)
+{
+  tcgetattr(0, &old); /* grab old terminal i/o settings */
+  new = old; /* make new settings same as old settings */
+  new.c_lflag &= ~ICANON; /* disable buffered i/o */
+  new.c_lflag &= echo ? ECHO : ~ECHO; /* set echo mode */
+  tcsetattr(0, TCSANOW, &new); /* use these new terminal i/o settings now */
+}
+
+/* Restore old terminal i/o settings */
+void resetTermios(void)
+{
+  tcsetattr(0, TCSANOW, &old);
+}
+char getch_(int echo)
+{
+  char ch;
+  initTermios(echo);
+  ch = getchar();
+  resetTermios();
+  return ch;
+}
+
+/* Read 1 character without echo */
+char getch(void)
+{
+  return getch_(0);
+}
 
 void init_templog(void)
 {
@@ -43,7 +75,7 @@ char *set_port_name(void)
         printf("Error, no such device\n");
         strcpy(port, tmp);
     } else {
-        printf("Port has been set")
+        printf("Port has been set\n");
     }
     return port;
 }
@@ -61,13 +93,15 @@ void open_port(void)
     }
 
 }
-/*void start_stop_log(int log)
+void start_stop_log()
 {
-    if (log = 1) { //open file and start logging
-        FILE *file = fopen(path,"a");
-        fprintf(file, "%s%s\n", asctime (timeinfo), input);
-        fclose(file);
-    } else { //stop logging and close file
+    char buff_temp;
 
+    while (comRead(0, &buff_temp, 1) == 0) {
     }
-}*/
+    printf("%c\n", buff_temp);
+    /*FILE *file = fopen(path,"a");
+    fprintf(file, "%s%s\n", asctime (timeinfo), input);
+    fclose(file);*/
+
+}
