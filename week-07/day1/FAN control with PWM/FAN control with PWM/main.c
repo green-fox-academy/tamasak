@@ -8,13 +8,10 @@ int main(void)
 	init_led();
 	timer0_init();
 	ADC_Init();
+	//PORTD |= 1 << PORTD6;
 	
 	while (1) {
-		/*set_duty_cycle(10);
-		_delay_ms(1000);
-		set_duty_cycle(100);
-		_delay_ms(1000);*/
-		uint16_t voltage = ADC_Read() / 10;
+		uint16_t voltage = ADC_Read() / 4; 
 		set_duty_cycle(voltage);
 	}
 }

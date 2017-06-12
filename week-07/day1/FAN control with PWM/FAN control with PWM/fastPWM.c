@@ -19,8 +19,8 @@ void timer0_init(void)
 
 void set_duty_cycle(uint8_t duty)
 {
-	if (duty > 100)
-		duty = 100;
+	if (duty > 255)
+		duty = 255;
 	else if (duty < 0)
 		duty = 0;
 	OCR0A = duty;
@@ -28,4 +28,5 @@ void set_duty_cycle(uint8_t duty)
 void init_led(void)
 {
 	DDRD |= 1 << DDRD6;
+	//PORTD |= 1 << PORTD6;
 }
