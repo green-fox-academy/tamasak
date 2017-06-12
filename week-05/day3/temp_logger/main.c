@@ -9,6 +9,8 @@
 int main()
 {
     init_templog();
+
+    run_program();
     //int log = -1; // if -1 -> not logging, if 1 -> logging
     while (1) {
 		int ch;

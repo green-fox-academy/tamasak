@@ -14,6 +14,9 @@ char *set_port_name(void);
 void set_write_file(void);
 void open_port(void);
 void start_stop_log();
+void run_program();
+void nonblock(int state);
+int kbhit();
 char port[80];
 char path[100];
 

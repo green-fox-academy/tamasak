@@ -7,6 +7,7 @@
 //#include <ncurses.h>
 #include <time.h>
 #include <termios.h>
+#include <unistd.h>
 
 static struct termios old, new;
 /* Initialize new terminal i/o settings */
@@ -95,13 +96,77 @@ void open_port(void)
 }
 void start_stop_log()
 {
+    time_t rawtime;
+    struct tm * timeinfo;
     char buff_temp;
-
-    while (comRead(0, &buff_temp, 1) == 0) {
+    int i = 0;
+    nonblock(1);
+    while(!i) {
+        /*time ( &rawtime );
+        timeinfo = localtime ( &rawtime );*/
+        sleep (2);
+        time_t timer;
+        char buffer[26];
+        struct tm* tm_info;
+        time(&timer);
+        tm_info = localtime(&timer);
+        strftime(buffer, 26, "%Y-%m-%d %H:%M:%S", tm_info);
+        puts(buffer);
+        FILE *file = fopen("temp.log","a");
+        while (comRead(0, &buff_temp, 1) == 0) {
+        }
+        printf("%c", buff_temp);
+        fprintf(file, "%s\t%c", buffer, buff_temp);
+        while (comRead(0, &buff_temp, 1) == 0) {
+        }
+        printf("%c", buff_temp);
+        fprintf(file, "%c", buff_temp);
+        while (comRead(0, &buff_temp, 1) == 0) {
+        }
+        printf("%c", buff_temp);
+        fprintf(file, "%c", buff_temp);
+        fclose(file);
+        i=kbhit();
     }
-    printf("%c\n", buff_temp);
-    /*FILE *file = fopen(path,"a");
-    fprintf(file, "%s%s\n", asctime (timeinfo), input);
-    fclose(file);*/
+}
+void run_program()
+{
+    comEnumerate();
+    comOpen(0, 115200);
+    start_stop_log();
 
+}
+void nonblock(int state)
+{
+    struct termios ttystate;
+
+    //get the terminal state
+    tcgetattr(0, &ttystate);
+
+    if (state==1)
+    {
+        //turn off canonical mode
+        ttystate.c_lflag &= ~ICANON;
+        //minimum of number input read.
+        ttystate.c_cc[VMIN] = 1;
+    }
+    else if (state==0)
+    {
+        //turn on canonical mode
+        ttystate.c_lflag |= ICANON;
+    }
+    //set the terminal attributes.
+    tcsetattr(0, TCSANOW, &ttystate);
+
+}
+int kbhit()
+{
+    struct timeval tv;
+    fd_set fds;
+    tv.tv_sec = 0;
+    tv.tv_usec = 0;
+    FD_ZERO(&fds);
+    FD_SET(0, &fds); //STDIN_FILENO is 0
+    select(1, &fds, NULL, NULL, &tv);
+    return FD_ISSET(0, &fds);
 }

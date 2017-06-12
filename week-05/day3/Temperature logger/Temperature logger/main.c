@@ -19,7 +19,7 @@
 #define LED_PORT		PORTB
 #define LED_PORT_POS	PORTB5
 uint16_t cntr = 0;
-const uint16_t cntr_max = 50;
+const uint16_t cntr_max = 50; //* 721?
 
 ISR(TIMER0_OVF_vect) {
 	int8_t adc_data;	
