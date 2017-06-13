@@ -23,6 +23,7 @@ void system_init()
 	AC_driver_init();
 	freq_meas_init();
 	UART_init();
+	interrupt_init();
 	sei();
 }
 
@@ -54,5 +55,7 @@ int main(void)
 		_delay_ms(500);
 		printf("%f Hz\n", get_freq());
 		printf("%f RPM\n", get_rpm());
+		int works = (1 << ACO) & ACSR;
+		//printf("%d works", works);
 	}
 }
