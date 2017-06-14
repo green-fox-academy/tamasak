@@ -10,7 +10,7 @@
 #define FASTPWM_H_
 void timer2_init(void);
 void set_duty_cycle(uint8_t duty);
-void init_led(void);
+//void init_led(void);
 //uint8_t count = 0;
 
 

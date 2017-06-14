@@ -5,6 +5,7 @@
 #include <avr/io.h>
 #include <stdio.h>
 #include <avr/interrupt.h>
+#include "ADC_driver.h"
 
 #ifndef F_CPU
 #define F_CPU 16000000UL
@@ -26,6 +27,7 @@ void system_init()
 	UART_init();
 	interrupt_init();
 	timer2_init();
+	ADC_Init();
 	sei();
 }
 
@@ -49,15 +51,15 @@ int main(void)
 
 	// Infinite loop
 	while (1) {
-		// Generating an about 1Hz signal on the LED pin.
-		// The printf call will also take some time, so this won't be exactly 1Hz.
+		uint16_t voltage = ADC_Read() / 4;
+		set_duty_cycle(voltage);
 		LED_PORT |= 1 << LED_PORT_POS;
-		_delay_ms(500);
+		_delay_ms(1000);
 		LED_PORT &= ~(1 << LED_PORT_POS);
-		_delay_ms(500);
-		printf("%f Hz\n", get_freq());
+		_delay_ms(1000);
+		//printf("%f Hz\n", get_freq());
 		printf("%f RPM\n", get_rpm());
-		int works = (1 << ACO) & ACSR;
+		//int works = (1 << ACO) & ACSR;
 		//printf("%d works", works);
 	}
 }

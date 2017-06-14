@@ -9,6 +9,7 @@ void timer2_init(void)
 	TCCR2A |= 1 << WGM20;
 	TCCR2A |= 1 << WGM21; // fast pwm mode
 	TCCR2B |= 1 << CS20;
+	DDRB |= 1 << DDRB3;
 	/*TCCR0B |= 1 << CS02; // prescaler
 	TIFR0 |= OCF0A; //Timer/Counter0, Output Compare A Match Flag
 	TIFR0 |= TOV0; //  Timer/Counter0, Overflow Flag
@@ -24,9 +25,10 @@ void set_duty_cycle(uint8_t duty)
 	else if (duty < 0)
 		duty = 0;
 	OCR2A = duty;
+	printf("%d\n", duty);
 }
-void init_led(void)
+/*void init_led(void)
 {
-	DDRD |= 1 << DDRD6;
+	DDRB |= 1 << DDRB3;
 	//PORTD |= 1 << PORTD6;
-}
+}*/
