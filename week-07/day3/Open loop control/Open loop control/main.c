@@ -1,6 +1,7 @@
 #include "freq_meas.h"
 #include "UART_driver.h"
 #include "AC_driver.h"
+#include "fastPWM.h"
 #include <avr/io.h>
 #include <stdio.h>
 #include <avr/interrupt.h>
@@ -24,6 +25,7 @@ void system_init()
 	freq_meas_init();
 	UART_init();
 	interrupt_init();
+	timer2_init();
 	sei();
 }
 
