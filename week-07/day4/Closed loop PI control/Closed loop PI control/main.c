@@ -7,6 +7,8 @@
 #include <avr/interrupt.h>
 #include "ADC_driver.h"
 #include "control.h"
+#include <stdlib.h>
+#include <conio.h>
 
 #ifndef F_CPU
 #define F_CPU 16000000UL
@@ -49,14 +51,35 @@ int main(void)
 
 	// Try printf
 	printf("Startup...\r\n");
-
+	printf("add p value:\n");
+	char buffer1[20];
+	char buffer2[20];
+	float p;
+	gets(buffer1);
+	printf("add i value:\n");
+	float i;
+	gets(buffer2);
+	p = atof(buffer1);
+	i = atof(buffer2);
+	//printf("p=%f\n", p);
+	int log_on;
 	// Infinite loop
 	while (1) {
-		//uint16_t voltage = ADC_Read() / 4;
-		set_duty_cycle(pi_control(get_rpm(), 0.05, 0.01));
-		_delay_ms(10);
-		printf("%.0f RPM\n", get_rpm());
-		//int works = (1 << ACO) & ACSR;
-		//printf("%d works", works);
+		log_on = 1;
+		while(log_on) {
+
+			if (_kbhit() != 0) {
+				input = _getch();
+			}
+
+			if(input == 's') {
+				printf("\n-> Next command:");
+				input = 'q';
+				log_on = 0;
+			}
+			set_duty_cycle(pi_control(get_rpm(), i, p));
+			_delay_ms(10);
+			printf("%.0f RPM\n", get_rpm());
+		}
 	}
 }

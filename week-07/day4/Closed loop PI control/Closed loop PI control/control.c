@@ -20,8 +20,8 @@ int16_t pi_control(uint16_t rpm, float p_value, float i_value)
 	float error = (ADC_Read() * 5) - (float)rpm;
 	integral += error;
 	int16_t signal_value = error * p_value + integral * i_value;
-	if (signal_value < -5000) {
-		signal_value = -5000;
+	if (signal_value < 0) {
+		signal_value = 0;
 		integral -= error;
 	} else if (signal_value > 5000) {
 		signal_value = 5000;
