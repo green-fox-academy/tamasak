@@ -53,7 +53,7 @@ int main(void)
 	// Infinite loop
 	while (1) {
 		//uint16_t voltage = ADC_Read() / 4;
-		set_duty_cycle(p_control(get_rpm(), 0.01));
+		set_duty_cycle(pi_control(get_rpm(), 0.05, 0.01));
 		_delay_ms(10);
 		printf("%.0f RPM\n", get_rpm());
 		//int works = (1 << ACO) & ACSR;
