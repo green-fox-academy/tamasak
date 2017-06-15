@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <avr/interrupt.h>
 #include "ADC_driver.h"
+#include "control.h"
 
 #ifndef F_CPU
 #define F_CPU 16000000UL
