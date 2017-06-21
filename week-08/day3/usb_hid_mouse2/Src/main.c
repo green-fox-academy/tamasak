@@ -135,6 +135,8 @@ int main(void) {
 	uint8_t touched = 0;
 	uint8_t right_click = 0;
 	uint8_t cycle_num;
+	uint8_t left_click = 0;
+	uint8_t move = 2;
 
 	BSP_TS_Init(480, 272);
 	// Initialize the LCD screen
@@ -143,7 +145,11 @@ int main(void) {
 	BSP_LCD_SelectLayer(0);
 	//BSP_LCD_SetLayerVisible(1, ENABLE);
 	BSP_LCD_DisplayOn();
-	BSP_LCD_Clear(LCD_COLOR_DARKGREEN);
+	BSP_LCD_Clear(LCD_COLOR_LIGHTYELLOW);
+	BSP_LCD_SetTextColor(LCD_COLOR_RED);
+	BSP_LCD_FillRect(0, 215, 240, 57);
+	BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
+	BSP_LCD_FillRect(240, 215, 240, 57);
 
 
 	while (1) {
@@ -151,7 +157,7 @@ int main(void) {
 		BSP_TS_GetState(&touch_state);
 		while (touch_state.touchDetected) {
 			// right click
-			BSP_TS_GetState(&touch_state);
+			/*BSP_TS_GetState(&touch_state);
 			if ((touch_state.touchDetected == 2) && (right_click == 0)) {
 				HID_Buffer[0] = 0b00000010;
 				USBD_HID_SendReport(&USBD_Device, HID_Buffer, 4);
@@ -160,43 +166,85 @@ int main(void) {
 				right_click = 1;
 			}
 			if (touch_state.touchDetected != 2)
-				right_click = 0;
+				right_click = 0;*/
 			// left click
 			if (cycle_num == 255)
 				cycle_num = 0;
 			// move cursor
 			BSP_TS_GetState(&touch_state);
-			//if (touch_state.touchY > 200) {
+			if ((touch_state.touchY[0] < 215) && (touch_state.touchY[1] < 215)) {
+				tmpx2 = tmpx;
+				tmpy2 = tmpy;
 				tmpx = touch_state.touchX[0];
 				tmpy = touch_state.touchY[0];
 				HID_Buffer[1] = (tmpx - tmpx2) * 3;
 				HID_Buffer[2] = (tmpy - tmpy2) * 3;
-			//} else {
-			//	touched = 0;
-			//}
-			if (touched == 1) {
+			} else if ((touch_state.touchX[0] > 240) && (right_click == 0)) {
+				touched = 0;
+				HID_Buffer[0] = 0b00000010;
+				USBD_HID_SendReport(&USBD_Device, HID_Buffer, 4);
+				HAL_Delay(20);
+				right_click = 1;
+			} else if ((touch_state.touchX[0] > 240) || (touch_state.touchX[1] > 240)) {
+				// semmi
+			} else if (right_click == 0) {
+				touched = 0;
+				left_click = 1;
+				HID_Buffer[0] = left_click;
+				if (move == 2) {
+					USBD_HID_SendReport(&USBD_Device, HID_Buffer, 4);
+					HAL_Delay(5);
+				}
+				if (touch_state.touchDetected == 1) {
+					HID_Buffer[1] = 0;
+					HID_Buffer[2] = 0;
+					move = 0;
+				} else if ((touch_state.touchY[0] < 215) && (touch_state.touchDetected == 2)) {
+					tmpx2 = tmpx;
+					tmpy2 = tmpy;
+					tmpx = touch_state.touchX[0];
+					tmpy = touch_state.touchY[0];
+					HID_Buffer[1] = (tmpx - tmpx2) * 3;
+					HID_Buffer[2] = (tmpy - tmpy2) * 3;
+					if (move < 2)
+						move++;
+				} else if ((touch_state.touchY[1] < 215) && (touch_state.touchDetected == 2)) {
+					tmpx2 = tmpx;
+					tmpy2 = tmpy;
+					tmpx = touch_state.touchX[1];
+					tmpy = touch_state.touchY[1];
+					HID_Buffer[1] = (tmpx - tmpx2) * 3;
+					HID_Buffer[2] = (tmpy - tmpy2) * 3;
+					if (move < 2)
+						move++;
+				}
+			}
+			if (touched == 1 && move == 2) {
 				USBD_HID_SendReport(&USBD_Device, HID_Buffer, 4);
 				//BSP_LCD_FillEllipse(tmpx, tmpy, 5, 5);
-				HID_Buffer[0] = 0;
 			}
-			tmpx2 = tmpx;
-			tmpy2 = tmpy;
+			HID_Buffer[0] = left_click;
 			BSP_TS_GetState(&touch_state);
 			if (cycle_num < 240)
 				cycle_num ++;
 			HAL_Delay(1);
+			if (((touch_state.touchY[0] < 215) || (touch_state.touchY[1] < 215)) && ((touch_state.touchX[0] < 240) && (touch_state.touchX[1] < 240))) {
+				left_click = 0;
+			}
 			if (touch_state.touchDetected == 0)
 				break;
 			touched = 1;
-			/*uint8_t buffer[100];
-			sprintf((char*)buffer, "cycle:   %u", cycle_num);
-		    BSP_LCD_ClearStringLine(1);
-		    BSP_LCD_DisplayStringAtLine(0, buffer);*/
+			uint8_t buffer[100];
+			/*sprintf((char*)buffer, "Y0:   %d", touch_state.touchY[0]);
+		    //BSP_LCD_ClearStringLine(1);
+		    BSP_LCD_DisplayStringAtLine(0, buffer);
+		    sprintf((char*)buffer, "Y1:   %d", touch_state.touchY[1]);
+		    BSP_LCD_DisplayStringAtLine(1, buffer);*/
 
 		}
 		//cycle_num = 10;
 		HAL_Delay(10);
-		if (cycle_num < 30) {
+		if ((cycle_num < 30) && (right_click == 0)) {
 			HID_Buffer[0] = 1;
 		}
 		else {
@@ -209,6 +257,8 @@ int main(void) {
 		BSP_LCD_DisplayStringAt(10, 10, (uint8_t*) text, LEFT_MODE);*/
 		touched = 0;
 		right_click = 0;
+		left_click = 0;
+		move = 2;
 	}
 }
 
