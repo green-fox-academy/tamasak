@@ -5,6 +5,9 @@ void initTermios(int echo);
 void resetTermios(void);
 char getch_(int echo);
 char getch(void);
+void set_username(info_storeage *storeage);
+void list_users(info_storeage *storeage);
+void init(info_storeage *storeage);
 
 
 

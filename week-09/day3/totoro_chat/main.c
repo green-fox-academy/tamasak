@@ -8,20 +8,24 @@
 #include "basics.h"
 #include <pthread.h>
 
+
 typedef struct {
     char name[255];
     uint32_t ipaddress;
     int port;
 } user_info;
-user_info user_array[50];
+
+typedef struct {
+    user_info array[50];
+    int length;
+} info_storeage
 
 int main()
 {
-    /*
-     * Init functions
-     */
+    info_storeage storeage;
+    init(&storeage);
 
-    print_list();
+    pthread_t inc_x_thread;
 
     while (1) {
 		int ch;
@@ -31,11 +35,11 @@ int main()
 		} else if (ch == 101) { //e exit
 			break;
 		} else if (ch == 110) { //n set user name
-			//set_username();
+			set_username(&storeage);
 		} else if (ch == 108) { //l list known users
-			//list_users();
+			list_users(&storeage);
 		} else if (ch == 100) { //d Send discovery request
-			//discovery_request();
+            pthread_create(&inc_x_thread, NULL, &discovery_request, NULL);
 		} else if (ch == 109) { //m Send message
 			//send_message();
 		}
