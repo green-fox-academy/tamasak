@@ -1,14 +1,3 @@
-
-// ha jon broadcast, akkor fogad es visszakuldi a nevet, portot...
-
-// ha TOTORO discovery_port_number jon, akkor
-// TCP message to ip_of_discovery_request:discovery_port_number
-// printf my_name message_port_number.
-/*
-
-    IP is 255.255.255.255, this is the broadcast IP
-    port is 12345, this can not be modified!
-*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -54,6 +43,7 @@ int broadcast_listen(void)
         }
 
         addr_len = sizeof(struct sockaddr);
+        listen(sockfd, 5);
         if ((numbytes = recvfrom(sockfd, buf, MAXBUFLEN-1 , 0,
             (struct sockaddr *)&their_addr, &addr_len)) == -1) {
             perror("recvfrom");
@@ -62,11 +52,24 @@ int broadcast_listen(void)
         newsockfd = accept(sockfd,
                  (struct sockaddr *) &their_addr,
                  &addr_len);
+        int n;
+        char buffer[256];
+
+        bzero(buffer,256);
+        n = read(sock,buffer,255);
+        //inet_pton(AF_INET, their_addr.sin_addr, &(->sin_addr));
+        storeage->array[storeage->length].ipaddress = their_addr.sin_addr;
+        storeage->array[storeage->length].port = their_addr.sin_port;
+        //storeage->array[storeage->length].name =
+        storeage->length++;
+
+        printf("Here is the message: %s\n",buffer);
+
         /*printf("listener: got packet from %s\n",
             inet_ntop(their_addr.ss_family,
                 get_in_addr((struct sockaddr *)&their_addr),
                 s, sizeof s));*/
-
+/*
         char input [256];
         strcpy(input, buf);
         char *totoro = strtok(input, " ");
@@ -74,8 +77,9 @@ int broadcast_listen(void)
         int port_int = atoi(portnum);
         char send_message[255];
         strcat (send_message," 54321");
-        //their_addr.sin_port = htons(port_int);
+        their_addr.sin_port = htons(port_int);
         n = write(newsockfd,send_message,sizeof(send_message));
+*/
 
         close(sockfd);
     }
