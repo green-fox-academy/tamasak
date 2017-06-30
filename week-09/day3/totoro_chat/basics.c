@@ -1,6 +1,8 @@
+#include "main.h"
 #include "basics.h"
 #include <time.h>
 #include <termios.h>
+
 
 static struct termios old, new;
 /* Initialize new terminal i/o settings */
@@ -47,11 +49,11 @@ void print_list (void)
 void set_username(info_storeage *storeage)
 {
     printf("Type in your name\n");
-    gets(storeage->array[storeage->length + 1].name);
-    storeage->array[storeage->length + 1].ipaddress = 0;
-    storeage->array[storeage->length + 1].port = 54321;
+    gets(storeage->array[storeage->length].name);
+    storeage->array[storeage->length].ipaddress = 0;
+    storeage->array[storeage->length].port = 54321;
     storeage->length += 1;
-    printf(Your name has been set\n);
+    printf("Your name has been set\n");
 }
 void init(info_storeage *storeage)
 {
@@ -61,8 +63,8 @@ void init(info_storeage *storeage)
 }
 void list_users(info_storeage *storeage)
 {
-    printf("IP\t\tport\tname\t\n");
-    for (int i = 0; i <= storeage->length; i++) {
-        printf("%d\t%d\t%s", storeage->array[i].ipaddress, storeage->array.port, storeage->array.name);
+    printf("IP\tport\tname\t\n");
+    for (int i = 0; i < storeage->length; i++) {
+        printf("%d\t%d\t%s\n", storeage->array[i].ipaddress, storeage->array[i].port, storeage->array[i].name);
     }
 }

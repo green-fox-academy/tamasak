@@ -7,25 +7,20 @@
 #include <string.h>
 #include "basics.h"
 #include <pthread.h>
+#include <unistd.h>
+#include <termios.h>
 
 
-typedef struct {
-    char name[255];
-    uint32_t ipaddress;
-    int port;
-} user_info;
-
-typedef struct {
-    user_info array[50];
-    int length;
-} info_storeage
 
 int main()
 {
     info_storeage storeage;
     init(&storeage);
+    pthread_t broad_listen;
+    pthread_create(&broad_listen, NULL, broadcast_listen, NULL);
+    pthread_join(broad_listen, NULL);
 
-    pthread_t inc_x_thread;
+    //pthread_create(&inc_x_thread, NULL, test_thread, NULL);
 
     while (1) {
 		int ch;
@@ -39,7 +34,10 @@ int main()
 		} else if (ch == 108) { //l list known users
 			list_users(&storeage);
 		} else if (ch == 100) { //d Send discovery request
-            pthread_create(&inc_x_thread, NULL, &discovery_request, NULL);
+		    pthread_t disco_req;
+            pthread_create(&disco_req, NULL, discovery_request, NULL);
+            pthread_join(disco_req, NULL);
+            //discovery_request();
 		} else if (ch == 109) { //m Send message
 			//send_message();
 		}
@@ -47,3 +45,10 @@ int main()
 	}
     return 0;
 }
+/*void test_thread (void)
+{
+    //while (1) {
+        printf("1\n");
+        sleep(1);
+    //}
+}*/

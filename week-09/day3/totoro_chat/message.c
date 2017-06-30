@@ -4,6 +4,8 @@
  * this socket receives the messages from other users
  *
  */
+
+ // Ez mar a csevegeshez kell a vegen - kuldes
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -27,7 +29,7 @@ int server2(void)
 
      sockfd = socket(AF_INET, SOCK_STREAM, 0);
      bzero((char *) &serv_addr, sizeof(serv_addr));
-     portno = 42042;
+     portno = 54321;
      serv_addr.sin_family = AF_INET;
      serv_addr.sin_addr.s_addr = INADDR_ANY;
      serv_addr.sin_port = htons(portno);
@@ -62,13 +64,25 @@ int server2(void)
  *****************************************/
 void dostuff (int sock)
 {
-   int n;
-   char buffer[256];
+    int n;
+    char buffer[256];
 
-   bzero(buffer,256);
-   n = read(sock,buffer,255);
-   if (n < 0) error("ERROR reading from socket");
-   printf("Here is the message: %s\n",buffer);
-   n = write(sock,"I got your message",18);
-   if (n < 0) error("ERROR writing to socket");
+    bzero(buffer,256);
+    n = read(sock,buffer,255);
+    if (n < 0) error("ERROR reading from socket");
+    char input [256];
+    strcpy(input, buffer);
+    char *totoro = strtok(input, " ");
+    if (strcmp(totoro, "TOTORO")) {
+        char *portnum = strtok(NULL, "\0");
+        int port_int = atoi(portnum);
+        char send_message[255];
+        strcat (send_message," 54321");
+        n = write(sock,send_message, sizeof(send_message));
+        // elmenteni az infokat
+    } else {
+    printf("Here is the message: %s\n",buffer); // at kell irni, hogy nev is latszodjon
+    n = write(sock,"I got your message",18);
+    if (n < 0) error("ERROR writing to socket");
+    }
 }
