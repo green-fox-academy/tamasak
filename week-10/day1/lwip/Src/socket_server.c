@@ -6,6 +6,7 @@
 #include "app_ethernet.h"
 #include "lwip/sockets.h"
 #include "main.h"
+#include <string.h>
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -67,6 +68,67 @@ void socket_server_thread(void const *argument)
 	close(slave_sock);
 	close(sockfd);
 
+
+
+}
+
+void broadcast_listener_thread (void const *argument)
+{
+	/*
+    socket()
+    setsockopt()
+    bind()
+    recvfrom()
+	*/
+
+	int broadcast = 1;
+	// Server address structure initialization
+	struct sockaddr_in addr_in;                          // Inet address structure definition
+	addr_in.sin_family = AF_INET;                        // This address is an internet address
+	addr_in.sin_port = htons(12345);
+	addr_in.sin_addr.s_addr = inet_addr(INADDR_ANY);
+	//struct sockaddr *addr = (struct socka.addr *)&addr_in; // Make a struct sockaddr pointer, which points to the address
+
+	// Creating the socket
+	int sockfd;
+	sockfd = socket(PF_INET, SOCK_DGRAM,IPPROTO_UDP);
+
+	// Setsockopt()
+	if (setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &broadcast,
+		sizeof (broadcast)) == -1) {
+		LCD_UsrLog("Error: setsockopt (SO_BROADCAST)");
+		exit(1);
+	}
+
+	// Start binding the socket to the previously set address
+	int flag = bind(sockfd, (struct sockaddr*)&addr_in, sizeof(addr_in));
+
+	struct sockaddr_in client_addr;
+	while(1) {
+		int client_addr_len = sizeof(client_addr);
+		char buff[255];
+		int receive_bytes = recvfrom(sockfd, buff, 255, 0,
+									(struct sockaddr*)&client_addr,
+									&client_addr_len);
+		buff[receive_bytes] = '\0';
+		uint32_t client_ip = client_addr.sin_addr.s_addr;
+
+		// get data
+		char unique_str[255];
+		unique_str[0] = '\0';
+		int port;
+
+		if (sscanf(buff, "%s %d", unique_str, &port) < 2) {
+			printf("Error: broadcast_listener - sscanf()\n");
+		}
+		if (strcmp(unique_str, "marharepa") != 0) {
+			LCD_UsrLog("%s\n", unique_str);
+		}
+	}
+
+	// recvfrom()
+	//socklen_t addr_len = sizeof their_addr;
+	//recvfrom(sockfd, buf, 255 , 0, (struct sockaddr *)&their_addr, &addr_len);
 
 
 }

@@ -146,6 +146,9 @@ static void StartThread(void const * argument)
   osThreadDef(Server, socket_server_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 5);
   osThreadCreate (osThread(Server), NULL);
 
+  // broadcast
+  osThreadDef(Broadcast, broadcast_listener_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 5);
+  osThreadCreate (osThread(Broadcast), NULL);
   while (1) {
     /* Delete the Init Thread */ 
     osThreadTerminate(NULL);
