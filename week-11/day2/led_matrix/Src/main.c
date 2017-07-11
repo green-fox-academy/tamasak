@@ -125,17 +125,20 @@ static void StartThread(void const * argument)
   BSP_Config();
   
   /* Create tcp_ip stack thread */
-  tcpip_init(NULL, NULL);
+  //tcpip_init(NULL, NULL);
   
   /* Initialize the LwIP stack */
-  Netif_Config();
+  //Netif_Config();
 
   /* Notify user about the network interface config */
-  User_notification(&gnetif);
+  //User_notification(&gnetif);
   
   /* Start DHCPClient */
-  osThreadDef(DHCP, DHCP_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 2);
-  osThreadCreate (osThread(DHCP), &gnetif);
+ // osThreadDef(DHCP, DHCP_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 2);
+  //osThreadCreate (osThread(DHCP), &gnetif);
+
+
+  StartApplication();
 
   // Start led matrix updater thread
   osThreadDef(LED_MATRIX_UPDATE, led_matrix_update_thread, osPriorityLow, 0, configMINIMAL_STACK_SIZE * 2);
@@ -146,13 +149,14 @@ static void StartThread(void const * argument)
   osThreadCreate (osThread(LED_MATRIX_WATERFALL), NULL);
 
   // Start adc thread
-  osThreadDef(ADC_START, adc_speed, osPriorityLow, 0, configMINIMAL_STACK_SIZE * 2);
+  osThreadDef(ADC_START, adc_speed, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
   osThreadCreate (osThread(ADC_START), NULL);
 
   while (1) {
     /* Delete the Init Thread */ 
     osThreadTerminate(NULL);
   }
+
 }
 
 /**

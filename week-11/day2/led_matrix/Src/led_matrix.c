@@ -29,36 +29,32 @@ ADC_HandleTypeDef AdcHandle;
 
 /* Variable used to get converted value */
 __IO uint16_t uhADCxConvertedValue = 0;
-uint32_t adc_value = 50;
+// message queue
+osMessageQDef(MsgBox, 1, uint32_t);              // Define message queue
+osMessageQId  MsgBox;
 
 /* Private function prototypes -----------------------------------------------*/
 void led_matrix_set(uint8_t row, uint8_t col, uint8_t state);
 /* Private functions ---------------------------------------------------------*/
 
-// TODO:
 // Write this function!
 void led_matrix_set(uint8_t row, uint8_t col, uint8_t state) { // beallitja a tombben az ertekeket
-	// TODO:
 	// Wait for the mutex
 	osStatus status;
 	if (led_matrix_mutex_id != NULL)  {
 		status = osMutexWait (led_matrix_mutex_id, 0);
 	}
 
-	// TODO:
 	// Change the LED in the selected row and col to the specified state
 	// Use the led_matrix_state 2D array variable!
 	led_matrix_state[row][col] = !state;
 
-
-	// TODO:
 	// Release the mutex
 	if (led_matrix_mutex_id != NULL)  {
 		status = osMutexRelease(led_matrix_mutex_id);
 	}
 }
 
-// TODO:
 // Write this function!
 void led_matrix_update_thread(void const *argument) // kirajzoltatja a tombben levo dolgokat
 {
@@ -105,7 +101,6 @@ void led_matrix_update_thread(void const *argument) // kirajzoltatja a tombben l
 	gpio_init_a.Mode = GPIO_MODE_OUTPUT_PP;
 	gpio_init_a.Speed = GPIO_SPEED_FREQ_MEDIUM;
 
-	// TODO:
 	// Initialize the pins as outputs and the led_matrix_state 2D array
 	HAL_GPIO_Init(GPIOC, &gpio_init_c);
 	HAL_GPIO_Init(GPIOG, &gpio_init_g);
@@ -132,8 +127,6 @@ void led_matrix_update_thread(void const *argument) // kirajzoltatja a tombben l
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, GPIO_PIN_SET);
 
-
-	// TODO:
 	// Create a mutex
 	// Use the LED_MATRIX_MUTEX_DEF
 	led_matrix_mutex_id = osMutexCreate  (osMutex (LED_MATRIX_MUTEX_DEF));
@@ -146,7 +139,6 @@ void led_matrix_update_thread(void const *argument) // kirajzoltatja a tombben l
 
 	// Infinite loop
 	while (1) {
-		// TODO:
 		// Implement the led matrix updater functionality
 
 		// Step 1:
@@ -220,7 +212,9 @@ void led_matrix_update_thread(void const *argument) // kirajzoltatja a tombben l
 // This thread is a waterfall type animation
 void led_matrix_waterfall_thread(void const *argument)
 {
-	while (1) {
+	uint32_t adc_value = 50;
+	osEvent  evt;
+	/*while (1) {
 		for (uint8_t r = 0; r < LED_MATRIX_ROWS; r++) {
 			for (uint8_t c = 0; c < LED_MATRIX_COLS; c++) {
 				led_matrix_set(r, c, 1);
@@ -234,15 +228,89 @@ void led_matrix_waterfall_thread(void const *argument)
 	while (1) {
 		LCD_ErrLog("led_matrix_waterfall - terminating...\n");
 		osThreadTerminate(NULL);
+	}*/
+	while(1) {
+		evt = osMessageGet(MsgBox, osWaitForever);
+		if (evt.status == osEventMessage) {
+		  adc_value = evt.value.v;
+		}
+		GPIO_PinState led_matrix_state2[7][5] = {
+		   {1, 1, 1, 1, 1} ,
+		   {1, 0, 1, 1, 1} ,
+		   {1, 0, 1, 1, 0} ,
+		   {1, 0, 1, 1, 1} ,
+		   {1, 0, 1, 1, 0} ,
+		   {1, 0, 1, 1, 1} ,
+		   {1, 1, 1, 1, 1}
+		};
+		memcpy(&led_matrix_state, &led_matrix_state2, sizeof(led_matrix_state2));
+		evt = osMessageGet(MsgBox, osWaitForever);
+		if (evt.status == osEventMessage) {
+		  adc_value = evt.value.v;
+		}
+		osDelay(adc_value);
+		GPIO_PinState led_matrix_state3[LED_MATRIX_ROWS][LED_MATRIX_COLS] = {
+			{1, 1, 1, 1, 1} ,
+			{0, 1, 1, 1, 1} ,
+			{1, 0, 1, 1, 0} ,
+			{1, 0, 1, 1, 1} ,
+			{1, 0, 1, 1, 0} ,
+			{0, 1, 1, 1, 1} ,
+			{1, 1, 1, 1, 1}
+		};
+		memcpy(&led_matrix_state, &led_matrix_state3, sizeof(led_matrix_state2));
+		evt = osMessageGet(MsgBox, osWaitForever);
+		if (evt.status == osEventMessage) {
+		  adc_value = evt.value.v;
+		}
+		osDelay(adc_value);
+		GPIO_PinState led_matrix_state4[7][5] = {
+		   {1, 1, 1, 1, 1} ,
+		   {1, 0, 1, 1, 1} ,
+		   {1, 0, 1, 1, 0} ,
+		   {1, 0, 1, 1, 1} ,
+		   {1, 0, 1, 1, 0} ,
+		   {1, 0, 1, 1, 1} ,
+		   {1, 1, 1, 1, 1}
+		};
+		memcpy(&led_matrix_state, &led_matrix_state4, sizeof(led_matrix_state2));
+		evt = osMessageGet(MsgBox, osWaitForever);
+		if (evt.status == osEventMessage) {
+		  adc_value = evt.value.v;
+		}
+		osDelay(adc_value);
+		GPIO_PinState led_matrix_state5[LED_MATRIX_ROWS][LED_MATRIX_COLS] = {
+		   {1, 1, 1, 1, 1} ,
+		   {1, 0, 1, 1, 1} ,
+		   {0, 1, 1, 1, 0} ,
+		   {0, 1, 1, 1, 1} ,
+		   {0, 1, 1, 1, 0} ,
+		   {1, 0, 1, 1, 1} ,
+		   {1, 1, 1, 1, 1}
+		};
+		memcpy(&led_matrix_state, &led_matrix_state5, sizeof(led_matrix_state2));
+		evt = osMessageGet(MsgBox, osWaitForever);
+		if (evt.status == osEventMessage) {
+		  adc_value = evt.value.v;
+		}
+		osDelay(adc_value);
 	}
 }
 
 void adc_speed(void)
 {
-	//__HAL_RCC_ADC_CLK_ENABLE();
-	//HAL_ADC_MspInit()
-	// __HAL_RCC_GPIOA_CLK_ENABLE(); //korabban meghivva
-	// HAL_GPIO_Init() // korabban meghivva
+
+	__HAL_RCC_ADC3_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	GPIO_InitTypeDef gpio_init_a;
+	gpio_init_a.Pin = GPIO_PIN_0;
+	gpio_init_a.Pull = GPIO_NOPULL;
+	gpio_init_a.Mode = GPIO_MODE_ANALOG;
+	gpio_init_a.Speed = GPIO_SPEED_FREQ_MEDIUM;
+	HAL_GPIO_Init(GPIOA, &gpio_init_a);
+
+	uint32_t adc_value = 50;
+	//adc_value = osPoolAlloc(mpool);
 	ADC_ChannelConfTypeDef sConfig;
 
 	AdcHandle.Instance = ADC3;
@@ -281,12 +349,18 @@ void adc_speed(void)
 	while (1)
 	{
 		HAL_ADC_Start(&AdcHandle);
-		HAL_ADC_PollForConversion(&AdcHandle, 50);
+		//HAL_ADC_PollForConversion(&AdcHandle, 50);
 		adc_value = HAL_ADC_GetValue(&AdcHandle);
 		printf("%d\n", adc_value);
-		osDelay(10);
+		osMessagePut(MsgBox, adc_value, osWaitForever);
 		HAL_ADC_Stop(&AdcHandle);
+		//osThreadYield();
 	}
+}
+
+void StartApplication (void) {
+  printf("MsgBoxd\n");
+  MsgBox = osMessageCreate(osMessageQ(MsgBox), NULL);  // create msg queue
 }
 
 

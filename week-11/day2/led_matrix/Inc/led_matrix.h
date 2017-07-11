@@ -18,6 +18,7 @@
 void led_matrix_update_thread(void const *argument);
 void led_matrix_waterfall_thread(void const *argument);
 void adc_speed(void);
+void StartApplication (void);
 #endif /* __LED_MATRIX_H */
 
 
