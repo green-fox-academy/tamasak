@@ -108,9 +108,6 @@ int main(void)
   
   /* We should never get here as control is now taken by the scheduler */
   while(1) {
-
-	  HAL_GPIO_WritePin(GPIOK, 4, GPIO_PIN_SET); //ezt atirni valami ertelmesre
-
   }
 }
 
@@ -145,12 +142,16 @@ static void StartThread(void const * argument)
   osThreadCreate (osThread(LED_MATRIX_UPDATE), NULL);
 
   // Start waterfall thread
-  osThreadDef(LED_MATRIX_WATERFALL, led_matrix_waterfall_thread, osPriorityLow, 0, configMINIMAL_STACK_SIZE * 2);
-  osThreadCreate (osThread(LED_MATRIX_WATERFALL), NULL);
+  //osThreadDef(LED_MATRIX_WATERFALL, led_matrix_waterfall_thread, osPriorityLow, 0, configMINIMAL_STACK_SIZE * 2);
+  //osThreadCreate (osThread(LED_MATRIX_WATERFALL), NULL);
 
   // Start adc thread
   osThreadDef(ADC_START, adc_speed, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
   osThreadCreate (osThread(ADC_START), NULL);
+
+  // touch screen
+  osThreadDef(TOUCH_SCREEN, touch_panel_write, osPriorityLow, 0, configMINIMAL_STACK_SIZE * 5);
+  osThreadCreate (osThread(TOUCH_SCREEN), NULL);
 
   while (1) {
     /* Delete the Init Thread */ 
@@ -220,6 +221,8 @@ static void BSP_Config(void)
   LCD_LOG_SetFooter((uint8_t *)"STM32746G-DISCO - GreenFoxAcademy");
   
   LCD_UsrLog ((char *)"Notification - Ethernet Initialization ...\n");
+  BSP_LCD_DisplayOn();
+  BSP_TS_Init(480, 272);
 }
 
 /**

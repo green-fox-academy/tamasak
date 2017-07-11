@@ -3,6 +3,7 @@
 #include "stm32f7xx_hal.h"
 #include "lcd_log.h"
 #include "cmsis_os.h"
+#include "stm32746g_discovery_lcd.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -12,11 +13,11 @@
 // Each LED state is stored in this 2D array
 GPIO_PinState led_matrix_state[LED_MATRIX_ROWS][LED_MATRIX_COLS] = {
 		   {1, 1, 1, 1, 1} ,
-		   {1, 0, 1, 1, 1} ,
-		   {0, 1, 1, 1, 0} ,
-		   {0, 1, 1, 1, 1} ,
-		   {0, 1, 1, 1, 0} ,
-		   {1, 0, 1, 1, 1} ,
+		   {1, 1, 1, 1, 1} ,
+		   {1, 1, 1, 1, 1} ,
+		   {1, 1, 1, 1, 1} ,
+		   {1, 1, 1, 1, 1} ,
+		   {1, 1, 1, 1, 1} ,
 		   {1, 1, 1, 1, 1}
 };
 
@@ -351,7 +352,8 @@ void adc_speed(void)
 		HAL_ADC_Start(&AdcHandle);
 		//HAL_ADC_PollForConversion(&AdcHandle, 50);
 		adc_value = HAL_ADC_GetValue(&AdcHandle);
-		printf("%d\n", adc_value);
+		//printf("%d\n", adc_value);
+		osDelay(5);
 		osMessagePut(MsgBox, adc_value, osWaitForever);
 		HAL_ADC_Stop(&AdcHandle);
 		//osThreadYield();
@@ -363,5 +365,44 @@ void StartApplication (void) {
   MsgBox = osMessageCreate(osMessageQ(MsgBox), NULL);  // create msg queue
 }
 
+void touch_panel_write(void)
+{
+	typedef struct {
+		uint16_t x;
+		uint16_t y;
+	} coordinate_t;
+	TS_StateTypeDef touch_state;
+	coordinate_t coord;
+	uint8_t touched = 0;
+	osDelay(100);
+	BSP_LCD_Clear(LCD_COLOR_LIGHTYELLOW);
+	BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+	for (int i = 0; i < 7; i++) {
+		for (int j = 0; j < 5; j++) {
+			BSP_LCD_DrawRect(i * 54, j * 54, 54, 54);
+		}
+	}
+	while(1) {
+		BSP_TS_GetState(&touch_state);
+		while (touch_state.touchDetected) {
+			BSP_TS_GetState(&touch_state);
+			if (touched == 0) {
+				coord.x = touch_state.touchX[0] / 54;
+				coord.y = touch_state.touchY[0] / 54;
+				if (led_matrix_state[6 - coord.x][coord.y] == 0) {
+					led_matrix_state[6 - coord.x][coord.y] = 1;
+					BSP_LCD_SetTextColor(LCD_COLOR_LIGHTYELLOW);
+					BSP_LCD_FillCircle((54 * coord.x + 27), (54 * coord.y + 27), 18);
+				} else {
+					led_matrix_state[6 - coord.x][coord.y] = 0;
+					BSP_LCD_SetTextColor(LCD_COLOR_GREEN);
+					BSP_LCD_FillCircle((54 * coord.x + 27), (54 * coord.y + 27), 18);
+				}
+			}
+			touched = 1;
+		}
+		touched = 0;
+	}
+}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
