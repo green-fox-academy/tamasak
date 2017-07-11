@@ -145,6 +145,10 @@ static void StartThread(void const * argument)
   osThreadDef(LED_MATRIX_WATERFALL, led_matrix_waterfall_thread, osPriorityLow, 0, configMINIMAL_STACK_SIZE * 2);
   osThreadCreate (osThread(LED_MATRIX_WATERFALL), NULL);
 
+  // Start adc thread
+  osThreadDef(ADC_START, adc_speed, osPriorityLow, 0, configMINIMAL_STACK_SIZE * 2);
+  osThreadCreate (osThread(ADC_START), NULL);
+
   while (1) {
     /* Delete the Init Thread */ 
     osThreadTerminate(NULL);

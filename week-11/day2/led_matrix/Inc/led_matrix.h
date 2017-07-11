@@ -5,6 +5,7 @@
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
+#include "stm32746g_discovery.h"
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
@@ -16,6 +17,7 @@
 /* Exported functions ------------------------------------------------------- */
 void led_matrix_update_thread(void const *argument);
 void led_matrix_waterfall_thread(void const *argument);
+void adc_speed(void);
 #endif /* __LED_MATRIX_H */
 
 

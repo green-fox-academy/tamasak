@@ -22,9 +22,14 @@ GPIO_PinState led_matrix_state[LED_MATRIX_ROWS][LED_MATRIX_COLS] = {
 
 // Mutex definition
 osMutexDef(LED_MATRIX_MUTEX_DEF);
-
 // Mutex global variable
 osMutexId led_matrix_mutex_id;
+/* ADC handler declaration */
+ADC_HandleTypeDef AdcHandle;
+
+/* Variable used to get converted value */
+__IO uint16_t uhADCxConvertedValue = 0;
+uint32_t adc_value = 50;
 
 /* Private function prototypes -----------------------------------------------*/
 void led_matrix_set(uint8_t row, uint8_t col, uint8_t state);
@@ -219,7 +224,8 @@ void led_matrix_waterfall_thread(void const *argument)
 		for (uint8_t r = 0; r < LED_MATRIX_ROWS; r++) {
 			for (uint8_t c = 0; c < LED_MATRIX_COLS; c++) {
 				led_matrix_set(r, c, 1);
-				osDelay(50);
+				//osDelay(50);
+				osDelay(adc_value / 10);
 				led_matrix_set(r, c, 0);
 			}
 		}
@@ -228,6 +234,58 @@ void led_matrix_waterfall_thread(void const *argument)
 	while (1) {
 		LCD_ErrLog("led_matrix_waterfall - terminating...\n");
 		osThreadTerminate(NULL);
+	}
+}
+
+void adc_speed(void)
+{
+	//__HAL_RCC_ADC_CLK_ENABLE();
+	//HAL_ADC_MspInit()
+	// __HAL_RCC_GPIOA_CLK_ENABLE(); //korabban meghivva
+	// HAL_GPIO_Init() // korabban meghivva
+	ADC_ChannelConfTypeDef sConfig;
+
+	AdcHandle.Instance = ADC3;
+
+	AdcHandle.Init.ClockPrescaler        = ADC_CLOCKPRESCALER_PCLK_DIV4;
+	AdcHandle.Init.Resolution            = ADC_RESOLUTION_12B;
+	AdcHandle.Init.ScanConvMode          = DISABLE;                       /* Sequencer disabled (ADC conversion on only 1 channel: channel set on rank 1) */
+	AdcHandle.Init.ContinuousConvMode    = DISABLE;
+	AdcHandle.Init.DiscontinuousConvMode = DISABLE;                       /* Parameter discarded because sequencer is disabled */
+	AdcHandle.Init.NbrOfDiscConversion   = 0;
+	AdcHandle.Init.ExternalTrigConvEdge  = ADC_EXTERNALTRIGCONVEDGE_NONE;        /* Conversion start trigged at each external event */
+	AdcHandle.Init.ExternalTrigConv      = ADC_EXTERNALTRIGCONV_T1_CC1;
+	AdcHandle.Init.DataAlign             = ADC_DATAALIGN_RIGHT;
+	AdcHandle.Init.NbrOfConversion       = 1;
+	AdcHandle.Init.DMAContinuousRequests = DISABLE;
+	AdcHandle.Init.EOCSelection          = DISABLE;
+
+
+
+	HAL_ADC_Init(&AdcHandle);
+
+	/*##-2- Configure ADC regular channel ######################################*/
+	sConfig.Channel      = ADC_CHANNEL_0;
+	sConfig.Rank         = 1;
+	sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+	sConfig.Offset       = 0;
+
+	HAL_ADC_ConfigChannel(&AdcHandle, &sConfig);
+
+
+	/*##-3- Start the conversion process #######################################*/
+	//HAL_ADC_Start(&AdcHandle);
+	//HAL_ADC_PollForConversion(&AdcHandle, 1000); // Wait for end of conversion
+
+	/* Infinite loop */
+	while (1)
+	{
+		HAL_ADC_Start(&AdcHandle);
+		HAL_ADC_PollForConversion(&AdcHandle, 50);
+		adc_value = HAL_ADC_GetValue(&AdcHandle);
+		printf("%d\n", adc_value);
+		osDelay(10);
+		HAL_ADC_Stop(&AdcHandle);
 	}
 }
 
