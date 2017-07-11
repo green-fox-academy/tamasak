@@ -7,6 +7,7 @@
 #include "stm32746g_discovery_ts.h"
 #include <string.h>
 #include "stm32746g_discovery_lcd.h"
+#include "socket_client.h"
 
 #define ABS(X)  ((X) > 0 ? (X) : -(X))
 void draw_thick_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
@@ -28,6 +29,8 @@ uint8_t line_width = 4;
 // Implement this function!
 void socket_server_thread(void const *argument)
 {
+	while(!is_ip_ok())
+		osDelay(1);
 	// Server address structure initialization
 	struct sockaddr_in addr_in;                          // Inet address structure definition
 	addr_in.sin_family = AF_INET;                        // This address is an internet address
@@ -75,7 +78,7 @@ void socket_server_thread(void const *argument)
 				// Send back the received string
 				//send(slave_sock, buff, received_bytes, 0);
 			}
-			//osDelay(5);
+			osDelay(5);
 		} while (received_bytes > 0);
 	}
 
@@ -98,14 +101,14 @@ int draw_points (char *coordinates)
 		text_color += 0xff000000;
 		osDelay(2);
 	} else if (strcmp(color, "clear") == 0) {
-		BSP_LCD_Clear(LCD_COLOR_LIGHTGREEN);
+		draw_init();
 	} else if (strcmp(color, "w") == 0) {
 		color = strtok(NULL, "\n");
 		line_width = atoi(color);
 		osDelay(2);
 	} else {
 		if (x_coord_prev == 500) {
-			BSP_LCD_Clear(LCD_COLOR_LIGHTGREEN);
+			//BSP_LCD_Clear(LCD_COLOR_LIGHTGREEN);
 			x_coord_prev = x_coord;
 			y_coord_prev = y_coord;
 			x_coord = atoi(strtok(coordinates, " "));
@@ -122,7 +125,7 @@ int draw_points (char *coordinates)
 			draw_thick_line(x_coord, y_coord, x_coord_prev, y_coord_prev);
 		}
 	}
-	//osDelay(5);
+	osDelay(5);
 	return 0;
 }
 void draw_thick_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)

@@ -55,8 +55,7 @@
 #include "lwip/tcpip.h"
 #include "app_ethernet.h"
 #include "lcd_log.h"
-#include "socket_server.h"
-#include "socket_client.h"
+#include "led_matrix.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -80,6 +79,7 @@ static void CPU_CACHE_Enable(void);
   * @param  None
   * @retval None
   */
+
 int main(void)
 {
   /* Configure the MPU attributes as Device memory for ETH DMA descriptors */
@@ -109,6 +109,8 @@ int main(void)
   /* We should never get here as control is now taken by the scheduler */
   while(1) {
 
+	  HAL_GPIO_WritePin(GPIOK, 4, GPIO_PIN_SET); //ezt atirni valami ertelmesre
+
   }
 }
 
@@ -135,15 +137,13 @@ static void StartThread(void const * argument)
   osThreadDef(DHCP, DHCP_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 2);
   osThreadCreate (osThread(DHCP), &gnetif);
 
-  // TODO:
-  // Define and start the server thread
-  osThreadDef(Server, socket_server_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 5);
-  osThreadCreate (osThread(Server), NULL);
+  // Start led matrix updater thread
+  osThreadDef(LED_MATRIX_UPDATE, led_matrix_update_thread, osPriorityLow, 0, configMINIMAL_STACK_SIZE * 2);
+  osThreadCreate (osThread(LED_MATRIX_UPDATE), NULL);
 
-  // TODO:
-  // Define and start the client thread
-  osThreadDef(Client, socket_client_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 5);
-  osThreadCreate (osThread(Client), NULL);
+  // Start waterfall thread
+  osThreadDef(LED_MATRIX_WATERFALL, led_matrix_waterfall_thread, osPriorityLow, 0, configMINIMAL_STACK_SIZE * 2);
+  osThreadCreate (osThread(LED_MATRIX_WATERFALL), NULL);
 
   while (1) {
     /* Delete the Init Thread */ 
@@ -208,7 +208,7 @@ static void BSP_Config(void)
   LCD_LOG_Init();
   
   /* Show Header and Footer texts */
-  LCD_LOG_SetHeader((uint8_t *)"TOTORO socket echo server");
+  LCD_LOG_SetHeader((uint8_t *)"LED matrix controller");
   LCD_LOG_SetFooter((uint8_t *)"STM32746G-DISCO - GreenFoxAcademy");
   
   LCD_UsrLog ((char *)"Notification - Ethernet Initialization ...\n");
