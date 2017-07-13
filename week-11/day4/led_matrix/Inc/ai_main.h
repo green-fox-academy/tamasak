@@ -9,6 +9,10 @@
 
 /* Exported functions ------------------------------------------------------- */
 
+#define DRAW_TABLE_PIXELS	130
+#define DIVIDER		8
+#define DRAW_TABLE_SIZE	16
+
 void training_init();
 void menu_init();
 void recognize_init();

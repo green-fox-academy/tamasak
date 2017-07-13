@@ -36,9 +36,6 @@ osMessageQId  MsgBox;
 
 /* Private function prototypes -----------------------------------------------*/
 void led_matrix_set(uint8_t row, uint8_t col, uint8_t state);
-/* Private functions ---------------------------------------------------------*/
-
-// Write this function!
 void led_matrix_set(uint8_t row, uint8_t col, uint8_t state) { // beallitja a tombben az ertekeket
 	// Wait for the mutex
 	osStatus status;
@@ -55,8 +52,6 @@ void led_matrix_set(uint8_t row, uint8_t col, uint8_t state) { // beallitja a to
 		status = osMutexRelease(led_matrix_mutex_id);
 	}
 }
-
-// Write this function!
 void led_matrix_update_thread(void const *argument) // kirajzoltatja a tombben levo dolgokat
 {
 	__HAL_RCC_GPIOB_CLK_ENABLE();
@@ -209,8 +204,6 @@ void led_matrix_update_thread(void const *argument) // kirajzoltatja a tombben l
 		osThreadTerminate(NULL);
 	}
 }
-
-// This thread is a waterfall type animation
 void led_matrix_waterfall_thread(void const *argument)
 {
 	uint32_t adc_value = 50;
@@ -297,7 +290,6 @@ void led_matrix_waterfall_thread(void const *argument)
 		osDelay(adc_value);
 	}
 }
-
 void adc_speed(void)
 {
 
@@ -359,12 +351,10 @@ void adc_speed(void)
 		//osThreadYield();
 	}
 }
-
 void StartApplication (void) {
   printf("MsgBoxd\n");
   MsgBox = osMessageCreate(osMessageQ(MsgBox), NULL);  // create msg queue
 }
-
 void touch_panel_write(void)
 {
 	typedef struct {
@@ -409,7 +399,6 @@ void touch_panel_write(void)
 		touched = 0;
 	}
 }
-
 void character_table (void)
 {
 	GPIO_PinState led_matrix_state_A[7][5] = {

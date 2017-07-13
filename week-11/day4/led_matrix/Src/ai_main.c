@@ -54,6 +54,7 @@
 #include "ai_main.h"
 #include <math.h>
 
+uint8_t draw_table_size = 16;
 uint8_t zero_text[2] = "0";
 uint8_t one_text[2] = "1";
 uint8_t two_text[2] = "2";
@@ -69,31 +70,12 @@ uint8_t x_coord;
 uint8_t y_coord;
 uint8_t ind;
 
-uint8_t seven_image[130][130];
-uint8_t seven_weights[130][130];
 uint16_t match_cntr[10];
-uint8_t zero_image[130][130];
-uint8_t zero_weights[130][130];
-uint8_t one_image[130][130];
-uint8_t one_weights[130][130];
-uint8_t two_image[130][130];
-uint8_t two_weights[130][130];
-uint8_t three_image[130][130];
-uint8_t three_weights[130][130];
-uint8_t four_image[130][130];
-uint8_t four_weights[130][130];
-/*
-uint8_t five_image[130][130];
-uint8_t five_weights[130][130];
-uint8_t six_image[130][130];
-uint8_t six_weights[130][130];
-uint8_t seven_image[130][130];
-uint8_t seven_weights[130][130];
-uint8_t eight_image[130][130];
-uint8_t eight_weights[130][130];
-uint8_t nine_image[130][130];
-uint8_t nine_weights[130][130];
-*/
+uint8_t zero_weights[DRAW_TABLE_SIZE][DRAW_TABLE_SIZE];
+uint8_t one_weights[DRAW_TABLE_SIZE][DRAW_TABLE_SIZE];
+uint8_t two_weights[DRAW_TABLE_SIZE][DRAW_TABLE_SIZE];
+uint8_t three_weights[DRAW_TABLE_SIZE][DRAW_TABLE_SIZE];
+uint8_t four_weights[DRAW_TABLE_SIZE][DRAW_TABLE_SIZE];
 
 uint8_t mode;
 
@@ -138,57 +120,6 @@ void ai_mode(void)
 				mode = 0;
 			}
 			ai_recognize();
-
-			if (TS_State.touchX[0] >= 301 && TS_State.touchX[0] <= 461 &&
-					TS_State.touchY[0] >= 20 && TS_State.touchY[0] <= 70) {
-
-				uint8_t max_match = 0;
-				int max_ind = 0;
-				for (int i = 0; i < 10; i++) {
-					if (match_cntr[i] > max_match) {
-						max_match = match_cntr[i];
-						max_ind = i;
-					}
-				}
-				switch(max_ind) {
-				case 0:
-					BSP_LCD_DisplayStringAt(310, 120, zero_text, LEFT_MODE);
-					break;
-				case 1:
-					BSP_LCD_DisplayStringAt(310, 120, one_text, LEFT_MODE);
-					break;
-				case 2:
-					BSP_LCD_DisplayStringAt(310, 120, two_text, LEFT_MODE);
-					break;
-				case 3:
-					BSP_LCD_DisplayStringAt(310, 120, three_text, LEFT_MODE);
-					break;
-				case 4:
-					BSP_LCD_DisplayStringAt(310, 120, four_text, LEFT_MODE);
-					break;
-					/*
-				case 5:
-					BSP_LCD_DisplayStringAt(310, 120, five_text, LEFT_MODE);
-					break;
-				case 6:
-					BSP_LCD_DisplayStringAt(310, 120, six_text, LEFT_MODE);
-					break;
-				case 7:
-					BSP_LCD_DisplayStringAt(310, 120, seven_text, LEFT_MODE);
-					break;
-				case 8:
-					BSP_LCD_DisplayStringAt(310, 120, eight_text, LEFT_MODE);
-					break;
-				case 9:
-					BSP_LCD_DisplayStringAt(310, 120, nine_text, LEFT_MODE);
-					break;
-					*/
-				default:
-					BSP_LCD_SetFont(&Font12);
-					uint8_t notrec_text[15] = "Not recognized";
-					BSP_LCD_DisplayStringAt(326, 130, notrec_text, LEFT_MODE);
-				}
-			}
 
 			//if CLEAR is selected
 			//BSP_LCD_DrawRect(301, 200, 150, 50);
@@ -267,9 +198,8 @@ void ai_train(void)
 		if (TS_State.touchX[0] >= 301 && TS_State.touchX[0] <= 451 &&
 					TS_State.touchY[0] >= 80 && TS_State.touchY[0] <= 110) {
 			ind = 0;
-			for(int i = 0; i < 130; i++) {
-				for (int j = 0; j < 130; j++) {
-					zero_image[i][j] = 0;
+			for(int i = 0; i < draw_table_size; i++) {
+				for (int j = 0; j < draw_table_size; j++) {
 					zero_weights[i][j] = 0;
 				}
 			}
@@ -278,11 +208,8 @@ void ai_train(void)
 		if (TS_State.touchX[0] >= 301 && TS_State.touchX[0] <= 351 &&
 								TS_State.touchY[0] >= 110 && TS_State.touchY[0] <= 160) {
 			ind = 1;
-			//BSP_LCD_Clear(LCD_COLOR_MAGENTA);
-			//set stored image structures to 0
-			for(int i = 0; i < 130; i++) {
-				for (int j = 0; j < 130; j++) {
-					one_image[i][j] = 0;
+			for(int i = 0; i < draw_table_size; i++) {
+				for (int j = 0; j < draw_table_size; j++) {
 					one_weights[i][j] = 0;
 				}
 			}
@@ -292,11 +219,8 @@ void ai_train(void)
 		if (TS_State.touchX[0] >= 351 && TS_State.touchX[0] <= 401 &&
 								TS_State.touchY[0] >= 110 && TS_State.touchY[0] <= 160) {
 			ind = 2;
-			//BSP_LCD_Clear(LCD_COLOR_YELLOW);
-			//set stored image structures to 0
-			for(int i = 0; i < 130; i++) {
-				for (int j = 0; j < 130; j++) {
-					two_image[i][j] = 0;
+			for(int i = 0; i < draw_table_size; i++) {
+				for (int j = 0; j < draw_table_size; j++) {
 					two_weights[i][j] = 0;
 				}
 			}
@@ -306,11 +230,9 @@ void ai_train(void)
 		if (TS_State.touchX[0] >= 401 && TS_State.touchX[0] <= 451 &&
 								TS_State.touchY[0] >= 110 && TS_State.touchY[0] <= 160) {
 			ind = 3;
-			//BSP_LCD_Clear(LCD_COLOR_GREEN);
 			//set stored image structures to 0
-			for(int i = 0; i < 130; i++) {
-				for (int j = 0; j < 130; j++) {
-					three_image[i][j] = 0;
+			for(int i = 0; i < draw_table_size; i++) {
+				for (int j = 0; j < draw_table_size; j++) {
 					three_weights[i][j] = 0;
 				}
 			}
@@ -320,11 +242,9 @@ void ai_train(void)
 		if (TS_State.touchX[0] >= 301 && TS_State.touchX[0] <= 351 &&
 								TS_State.touchY[0] >= 160 && TS_State.touchY[0] <= 210) {
 			ind = 4;
-			//BSP_LCD_Clear(LCD_COLOR_WHITE);
 			//set stored image structures to 0
-			for(int i = 0; i < 130; i++) {
-				for (int j = 0; j < 130; j++) {
-					four_image[i][j] = 0;
+			for(int i = 0; i < draw_table_size; i++) {
+				for (int j = 0; j < draw_table_size; j++) {
 					four_weights[i][j] = 0;
 				}
 			}
@@ -407,54 +327,29 @@ void ai_train(void)
 			//save coordinates to structure
 			switch(ind) {
 			case 0:
-				x_coord = (uint8_t)TS_State.touchX[0] - 71;
-				y_coord = (uint8_t)TS_State.touchY[0] - 71;
-				for(int i = -3; i < 3; i++) {
-					for (int j = -3; j < 3; j++) {
-						zero_image[x_coord + i][y_coord + j] = 1;
-					}
-				}
-				//zero_image[x_coord][y_coord] = 1;
+				x_coord = (uint8_t)TS_State.touchX[0] / DIVIDER;
+				y_coord = (uint8_t)TS_State.touchY[0] / DIVIDER;
+				zero_weights[x_coord][y_coord]++;
 				break;
 			case 1:
-				x_coord = (uint8_t)TS_State.touchX[0] - 71;
-				y_coord = (uint8_t)TS_State.touchY[0] - 71;
-				for(int i = -3; i < 3; i++) {
-					for (int j = -3; j < 3; j++) {
-						zero_image[x_coord + i][y_coord + j] = 1;
-					}
-				}
-				//one_image[x_coord][y_coord] = 1;
+				x_coord = (uint8_t)TS_State.touchX[0] / DIVIDER;
+				y_coord = (uint8_t)TS_State.touchY[0] / DIVIDER;
+				one_weights[x_coord][y_coord]++;
 				break;
 			case 2:
-				x_coord = (uint8_t)TS_State.touchX[0] - 71;
-				y_coord = (uint8_t)TS_State.touchY[0] - 71;
-				for(int i = -3; i < 3; i++) {
-					for (int j = -3; j < 3; j++) {
-						zero_image[x_coord + i][y_coord + j] = 1;
-					}
-				}
-				//two_image[x_coord][y_coord] = 1;
+				x_coord = (uint8_t)TS_State.touchX[0] / DIVIDER;
+				y_coord = (uint8_t)TS_State.touchY[0] / DIVIDER;
+				two_weights[x_coord][y_coord]++;
 				break;
 			case 3:
-				x_coord = (uint8_t)TS_State.touchX[0] - 71;
-				y_coord = (uint8_t)TS_State.touchY[0] - 71;
-				for(int i = -3; i < 3; i++) {
-					for (int j = -3; j < 3; j++) {
-						zero_image[x_coord + i][y_coord + j] = 1;
-					}
-				}
-				//three_image[x_coord][y_coord] = 1;
+				x_coord = (uint8_t)TS_State.touchX[0] / DIVIDER;
+				y_coord = (uint8_t)TS_State.touchY[0] / DIVIDER;
+				three_weights[x_coord][y_coord]++;
 				break;
 			case 4:
-				x_coord = (uint8_t)TS_State.touchX[0] - 71;
-				y_coord = (uint8_t)TS_State.touchY[0] - 71;
-				for(int i = -3; i < 3; i++) {
-					for (int j = -3; j < 3; j++) {
-						zero_image[x_coord + i][y_coord + j] = 1;
-					}
-				}
-				//four_image[x_coord][y_coord] = 1;
+				x_coord = (uint8_t)TS_State.touchX[0] / DIVIDER;
+				y_coord = (uint8_t)TS_State.touchY[0] / DIVIDER;
+				four_weights[x_coord][y_coord]++;
 				break;
 				/*
 			case 5:
@@ -493,119 +388,12 @@ void ai_train(void)
 			BSP_LCD_SetTextColor(LCD_COLOR_YELLOW);
 			BSP_LCD_FillRect(72, 72, 129, 129);
 			BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
-
-			switch (ind) {
-			case 0:
-				for(int i = 0; i < 130; i++) {
-					for (int j = 0; j < 130; j++) {
-						if (zero_image[i][j] == 1) {
-							zero_weights[i][j]++;		//save current data to weights structure
-							//five_image[i][j] = 0;		//empty image structure
-						}
-					}
-				}
-				break;
-			case 1:
-				for(int i = 0; i < 130; i++) {
-					for (int j = 0; j < 130; j++) {
-						if (one_image[i][j] == 1) {
-							one_weights[i][j]++;		//save current data to weights structure
-							//five_image[i][j] = 0;		//empty image structure
-						}
-					}
-				}
-				break;
-			case 2:
-				for(int i = 0; i < 130; i++) {
-					for (int j = 0; j < 130; j++) {
-						if (two_image[i][j] == 1) {
-							two_weights[i][j]++;		//save current data to weights structure
-							//five_image[i][j] = 0;		//empty image structure
-						}
-					}
-				}
-				break;
-			case 3:
-				for(int i = 0; i < 130; i++) {
-					for (int j = 0; j < 130; j++) {
-						if (three_image[i][j] == 1) {
-							three_weights[i][j]++;		//save current data to weights structure
-							//five_image[i][j] = 0;		//empty image structure
-						}
-					}
-				}
-				break;
-			case 4:
-				for(int i = 0; i < 130; i++) {
-					for (int j = 0; j < 130; j++) {
-						if (four_image[i][j] == 1) {
-							four_weights[i][j]++;		//save current data to weights structure
-							//five_image[i][j] = 0;		//empty image structure
-						}
-					}
-				}
-				break;
-				/*
-			case 5:
-				for(int i = 0; i < 130; i++) {
-					for (int j = 0; j < 130; j++) {
-						if (five_image[i][j] == 1) {
-							five_weights[i][j]++;		//save current data to weights structure
-							//five_image[i][j] = 0;		//empty image structure
-						}
-					}
-				}
-				break;
-			case 6:
-				for(int i = 0; i < 130; i++) {
-					for (int j = 0; j < 130; j++) {
-						if (six_image[i][j] == 1) {
-							six_weights[i][j]++;		//save current data to weights structure
-							//five_image[i][j] = 0;		//empty image structure
-						}
-					}
-				}
-				break;
-			case 7:
-				for(int i = 0; i < 130; i++) {
-					for (int j = 0; j < 130; j++) {
-						if (seven_image[i][j] == 1) {
-							seven_weights[i][j]++;		//save current data to weights structure
-							//five_image[i][j] = 0;		//empty image structure
-						}
-					}
-				}
-				break;
-			case 8:
-				for(int i = 0; i < 130; i++) {
-					for (int j = 0; j < 130; j++) {
-						if (eight_image[i][j] == 1) {
-							eight_weights[i][j]++;		//save current data to weights structure
-							//five_image[i][j] = 0;		//empty image structure
-						}
-					}
-				}
-				break;
-			case 9:
-				for(int i = 0; i < 130; i++) {
-					for (int j = 0; j < 130; j++) {
-						if (nine_image[i][j] == 1) {
-							nine_weights[i][j]++;		//save current data to weights structure
-							//five_image[i][j] = 0;		//empty image structure
-						}
-					}
-				}
-				break;
-				*/
-			}
-	}
-
-		//if push button is pressed
-		if (BSP_PB_GetState(BUTTON_KEY) == 1) {
-			menu_init();
-			mode = 0;
 		}
-
+	}
+	//if push button is pressed
+	if (BSP_PB_GetState(BUTTON_KEY) == 1) {
+		menu_init();
+		mode = 0;
 	}
 }
 void ai_recognize(void)
@@ -617,22 +405,22 @@ void ai_recognize(void)
 				TS_State.touchY[0] >= 76 && TS_State.touchY[0] <= 196) {
 		BSP_LCD_FillEllipse(TS_State.touchX[0], TS_State.touchY[0], 5, 5);
 		//save coordinates to structure
-		x_coord = (uint8_t)TS_State.touchX[0] - 71;
-		y_coord = (uint8_t)TS_State.touchY[0] - 71;
+		x_coord = (uint8_t)TS_State.touchX[0] / DIVIDER;
+		y_coord = (uint8_t)TS_State.touchY[0] / DIVIDER;
 		//rec_image[x_coord][y_coord] = 1;
-		if (zero_image[x_coord][y_coord] == 1 && zero_weights[x_coord][y_coord] > 200) {
+		if (zero_weights[x_coord][y_coord] > 3) {
 			match_cntr[0]++;
 		}
-		if (one_image[x_coord][y_coord] == 1 && one_weights[x_coord][y_coord] > 200) {
+		if (one_weights[x_coord][y_coord] > 3) {
 			match_cntr[1]++;
 		}
-		if (two_image[x_coord][y_coord] == 1 && two_weights[x_coord][y_coord] > 200) {
+		if (two_weights[x_coord][y_coord] > 3) {
 			match_cntr[2]++;
 		}
-		if (three_image[x_coord][y_coord] == 1 && three_weights[x_coord][y_coord] > 200) {
+		if (three_weights[x_coord][y_coord] > 3) {
 			match_cntr[3]++;
 		}
-		if (four_image[x_coord][y_coord] == 1 && four_weights[x_coord][y_coord] > 200) {
+		if (four_weights[x_coord][y_coord] > 3) {
 			match_cntr[4]++;
 		}
 		/*
@@ -653,6 +441,57 @@ void ai_recognize(void)
 		}
 		*/
 	}
+	// recognize
+	if (TS_State.touchX[0] >= 301 && TS_State.touchX[0] <= 461 &&
+			TS_State.touchY[0] >= 20 && TS_State.touchY[0] <= 70) {
+
+		uint8_t max_match = 0;
+		int max_ind = -1;
+		for (int i = 0; i < 10; i++) {
+			if (match_cntr[i] > max_match) {
+				max_match = match_cntr[i];
+				max_ind = i;
+			}
+		}
+		switch(max_ind) {
+		case 0:
+			BSP_LCD_DisplayStringAt(310, 120, zero_text, LEFT_MODE);
+			break;
+		case 1:
+			BSP_LCD_DisplayStringAt(310, 120, one_text, LEFT_MODE);
+			break;
+		case 2:
+			BSP_LCD_DisplayStringAt(310, 120, two_text, LEFT_MODE);
+			break;
+		case 3:
+			BSP_LCD_DisplayStringAt(310, 120, three_text, LEFT_MODE);
+			break;
+		case 4:
+			BSP_LCD_DisplayStringAt(310, 120, four_text, LEFT_MODE);
+			break;
+			/*
+		case 5:
+			BSP_LCD_DisplayStringAt(310, 120, five_text, LEFT_MODE);
+			break;
+		case 6:
+			BSP_LCD_DisplayStringAt(310, 120, six_text, LEFT_MODE);
+			break;
+		case 7:
+			BSP_LCD_DisplayStringAt(310, 120, seven_text, LEFT_MODE);
+			break;
+		case 8:
+			BSP_LCD_DisplayStringAt(310, 120, eight_text, LEFT_MODE);
+			break;
+		case 9:
+			BSP_LCD_DisplayStringAt(310, 120, nine_text, LEFT_MODE);
+			break;
+			*/
+		default:
+			BSP_LCD_SetFont(&Font12);
+			uint8_t notrec_text[15] = "Not recognized";
+			BSP_LCD_DisplayStringAt(326, 130, notrec_text, LEFT_MODE);
+		}
+	}
 }
 void ai_clear(void)
 {
@@ -671,15 +510,12 @@ void ai_clear(void)
 }
 void variable_init(void)
 {
-	for(int i = 0; i < 130; i++) {
-		for (int j = 0; j < 130; j++) {
-			one_image[i][j] = 0;
+	for(int i = 0; i < draw_table_size; i++) {
+		for (int j = 0; j < draw_table_size; j++) {
+			zero_weights[i][j] = 0;
 			one_weights[i][j] = 0;
-			two_image[i][j] = 0;
 			two_weights[i][j] = 0;
-			three_image[i][j] = 0;
 			three_weights[i][j] = 0;
-			four_image[i][j] = 0;
 			four_weights[i][j] = 0;
 			/*
 			five_image[i][j] = 0;
